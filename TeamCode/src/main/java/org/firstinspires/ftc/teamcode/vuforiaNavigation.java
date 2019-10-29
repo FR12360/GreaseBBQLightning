@@ -87,8 +87,6 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 public class vuforiaNavigation extends LinearOpMode {
 
 
-    //myBigTest driveTrain = new myBigTest();
-
     // IMPORTANT:  For Phone Camera, set 1) the camera source and 2) the orientation, based on how your phone is mounted:
     // 1) Camera Source.  Valid choices are:  BACK (behind screen) or FRONT (selfie side)
     // 2) Phone Orientation. Choices are: PHONE_IS_PORTRAIT = true (portrait) or PHONE_IS_PORTRAIT = false (landscape)
@@ -140,7 +138,6 @@ public class vuforiaNavigation extends LinearOpMode {
     private float phoneYRotate    = 0;
     private float phoneZRotate    = 0;
 
-    private myBigTest driveTrain = new myBigTest();
 
     @Override public void runOpMode() {
         //driveTrain.runOpMode();
