@@ -42,19 +42,16 @@ import com.qualcomm.robotcore.util.Range;
  * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
  * class is instantiated on the Robot Controller and executed.
  *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all linear OpModes contain.
+ * This particular OpMode just executes a basic Tank Drive Teleop for a four wheeled robot
  *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TeleOp", group="Linear Opmode")
+@TeleOp(name="Driver Mode")
 
 public class Driver extends LinearOpMode {
 
     // Declare OpMode members.
-    greaseBBQLightning robot = new greaseBBQLightning();
+    private greaseBBQLightning robot = new greaseBBQLightning();
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -92,8 +89,20 @@ public class Driver extends LinearOpMode {
             // - This uses basic math to combine motions and is easier to drive straight.
             double drive = -gamepad1.left_stick_y;
             double turn  =  gamepad1.right_stick_x;
-            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
+
+            //Added conditional statement to turn on axis
+            //when there is no acceleration (drive)
+            if(drive == 0 && turn > 0){
+                leftPower    = Range.clip(drive - turn, -1.0, 1.0) ;
+                rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
+            } else if(drive == 0 && turn < 0) {
+                leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
+                rightPower   = Range.clip(drive + turn, -1.0, 1.0) ;
+            } else {
+                leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
+                rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
+            }
+
 
             // Tank Mode uses one stick to control each wheel.
             // - This requires no math, but it is hard to drive forward slowly and keep straight.
@@ -121,6 +130,16 @@ public class Driver extends LinearOpMode {
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+            //telemetry.addData("Front Left Motor Power", myBigMotorFrontLeft.getPower());
+            //telemetry.addData("Front Right Motor Power", myBigMotorFrontRight.getPower());
+            //telemetry.addData("Back Left Motor Power", myBigMotorBackLeft.getPower());
+            //telemetry.addData("Back Right Motor Power", myBigMotorBackRight.getPower());
+            //telemetry.addData("Direction", myBigServoArmBase.getDirection());
+            telemetry.addData("Arm Base", robot.myBigServoArmBase.getPower());
+            //telemetry.addData("Direction", myBigServoArmMid.getDirection());
+            telemetry.addData("Arm Mid", robot.myBigServoArmMid.getPower());
+            //telemetry.addData("Direction", myBigServoArmMid.getDirection());
+            telemetry.addData("Arm Claw", robot.myBigServoClaw.getPower());
             telemetry.update();
         }
     }
