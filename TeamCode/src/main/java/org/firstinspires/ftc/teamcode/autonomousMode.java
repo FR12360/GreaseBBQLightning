@@ -64,11 +64,11 @@ public class autonomousMode extends LinearOpMode {
     private ElapsedTime     runtime = new ElapsedTime();
 
     static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 8.0 ;     // For figuring circumference
+    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                       (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.6;
+    static final double     DRIVE_SPEED             = 1;
     static final double     TURN_SPEED              = 0.5;
 
     @Override
@@ -119,9 +119,14 @@ public class autonomousMode extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED,  28,  28, 5.0);
+        encoderDrive(TURN_SPEED,   -18.5, 18.5, 4.0);
+        encoderDrive(DRIVE_SPEED, 50, 50, 4.0);
+        encoderDrive(DRIVE_SPEED, -18.5, 18.5, 4.0);
+        encoderDrive(DRIVE_SPEED, 17, 17, 4.0);
+        encoderDrive(DRIVE_SPEED, -18.5, 18.5, 4.0);
+        robot.dropOnBlock();
+        encoderDrive(DRIVE_SPEED, 40, 40, 4.0);
 
         //robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
         //robot.rightClaw.setPosition(0.0);
@@ -153,6 +158,8 @@ public class autonomousMode extends LinearOpMode {
             newRightTarget = robot.myBigMotorFrontRight.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
             robot.myBigMotorFrontLeft.setTargetPosition(newLeftTarget);
             robot.myBigMotorFrontRight.setTargetPosition(newRightTarget);
+            robot.myBigMotorBackLeft.setTargetPosition(newLeftTarget);
+            robot.myBigMotorBackRight.setTargetPosition(newRightTarget);
 
             // Turn On RUN_TO_POSITION
             robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -174,11 +181,12 @@ public class autonomousMode extends LinearOpMode {
             // However, if you require that BOTH motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
 
-            while (opModeIsActive() &&
-                   (runtime.seconds() < timeoutS)
-                    /*&&
+            while (opModeIsActive()
+                    //&&
+                   //(runtime.seconds() < timeoutS)
+                    &&
                     (robot.myBigMotorFrontLeft.isBusy() && robot.myBigMotorFrontRight.isBusy()
-                            && robot.myBigMotorBackLeft.isBusy() && robot.myBigMotorBackRight.isBusy())*/
+                            && robot.myBigMotorBackLeft.isBusy() && robot.myBigMotorBackRight.isBusy())
             )
 
             {

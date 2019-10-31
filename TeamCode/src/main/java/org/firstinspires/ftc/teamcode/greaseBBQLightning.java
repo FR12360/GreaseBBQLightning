@@ -50,9 +50,9 @@ public class greaseBBQLightning
         //Drop Claw onto stone
         myBigServoClaw.setPower(.3);
         sleep(200);
-        myBigServoArmMid.setPower(.6);
+        myBigServoArmMid.setPower(.3);
         sleep(200);
-        myBigServoArmBase.setPower(.7);
+        myBigServoArmBase.setPower(.5);
     }
 
     //Function Grab stone/Close Claw
