@@ -62,14 +62,14 @@ public class Driver extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-
+        robot.init(hardwareMap);
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        robot.myBigMotorBackLeft.setDirection(DcMotor.Direction.FORWARD);
-        robot.myBigMotorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
-        robot.myBigMotorBackRight.setDirection(DcMotor.Direction.REVERSE);
-        robot.myBigMotorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        //robot.myBigMotorBackLeft.setDirection(DcMotor.Direction.FORWARD);
+        //robot.myBigMotorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
+        //robot.myBigMotorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        //robot.myBigMotorFrontRight.setDirection(DcMotor.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -92,16 +92,19 @@ public class Driver extends LinearOpMode {
 
             //Added conditional statement to turn on axis
             //when there is no acceleration (drive)
-            if(drive == 0 && turn > 0){
-                leftPower    = Range.clip(drive - turn, -1.0, 1.0) ;
+            /*if(drive == 0 && turn > 0){
+                leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
                 rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
             } else if(drive == 0 && turn < 0) {
                 leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-                rightPower   = Range.clip(drive + turn, -1.0, 1.0) ;
+                rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
             } else {
                 leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
                 rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-            }
+            }*/
+
+            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
+            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
 
             // Tank Mode uses one stick to control each wheel.

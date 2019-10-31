@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -79,13 +80,17 @@ public class greaseBBQLightning
 
     /* Constructor */
     greaseBBQLightning() {
-        servoPowerArmBase = .25;
-        servoPowerArmMid = 0;
-        servoPowerArmClaw = .1;
+        //servoPowerArmBase = .25;
+        //servoPowerArmMid = 0;
+        //servoPowerArmClaw = .1;
     }
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
+        // Save reference to Hardware map
+        hwMap = ahwMap;
+
+        // Define and initialize Gyro
         imu = hwMap.get(Gyroscope.class, "imu");
 
         // Define and initialize all motors
@@ -100,12 +105,19 @@ public class greaseBBQLightning
         myBigMotorFrontLeft.setPower(0);
         myBigMotorFrontRight.setPower(0);
 
+        // Set Direction of motors
+
+        myBigMotorBackLeft.setDirection(DcMotor.Direction.REVERSE);
+        myBigMotorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        myBigMotorBackRight.setDirection(DcMotor.Direction.FORWARD);
+        myBigMotorFrontRight.setDirection(DcMotor.Direction.FORWARD);
+
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize servos
         myBigServoArmBase = hwMap.get(CRServo.class, "myBigServoArmBase");
