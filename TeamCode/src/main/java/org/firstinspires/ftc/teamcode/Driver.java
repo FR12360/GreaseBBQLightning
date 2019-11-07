@@ -64,12 +64,8 @@ public class Driver extends LinearOpMode {
         // step (using the FTC Robot Controller app on the phone).
         robot.init(hardwareMap);
 
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
-        //robot.myBigMotorBackLeft.setDirection(DcMotor.Direction.FORWARD);
-        //robot.myBigMotorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
-        //robot.myBigMotorBackRight.setDirection(DcMotor.Direction.REVERSE);
-        //robot.myBigMotorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        robot.myBigMotorRandP.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -113,36 +109,42 @@ public class Driver extends LinearOpMode {
             // rightPower = -gamepad1.right_stick_y ;
 
             // Send calculated power to wheels
-            robot.myBigMotorFrontLeft.setPower(leftPower);
-            robot.myBigMotorBackLeft.setPower(leftPower);
-            robot.myBigMotorFrontRight.setPower(rightPower);
-            robot.myBigMotorBackRight.setPower(rightPower);
+            //We reversed the front of the robot so these variables will need to change to
+            //Correctly represent orientation
+            robot.myBigMotorFrontLeft.setPower(rightPower);
+            robot.myBigMotorBackLeft.setPower(rightPower);
+            robot.myBigMotorFrontRight.setPower(leftPower);
+            robot.myBigMotorBackRight.setPower(leftPower);
 
             if(this.gamepad1.b){
-                robot.dropOnBlock();
+                //robot.dropOnBlock();
+                robot.myBigMotorRandP.setPower(-.5);
             }
 
             if(this.gamepad1.a){
-                robot.grabStone();
+                //robot.grabStone();
+                robot.myBigMotorRandP.setPower(.5);
             }
 
             if(this.gamepad1.y){
-                robot.returnToStart();
+                //robot.returnToStart();
             }
+
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+            telemetry.addData("Rack and Pinion Motor",  "Starting at %7d", robot.myBigMotorFrontRight.getCurrentPosition());
             //telemetry.addData("Front Left Motor Power", myBigMotorFrontLeft.getPower());
             //telemetry.addData("Front Right Motor Power", myBigMotorFrontRight.getPower());
             //telemetry.addData("Back Left Motor Power", myBigMotorBackLeft.getPower());
             //telemetry.addData("Back Right Motor Power", myBigMotorBackRight.getPower());
             //telemetry.addData("Direction", myBigServoArmBase.getDirection());
-            telemetry.addData("Arm Base", robot.myBigServoArmBase.getPower());
+            //telemetry.addData("Arm Base", robot.myBigServoArmBase.getPower());
             //telemetry.addData("Direction", myBigServoArmMid.getDirection());
-            telemetry.addData("Arm Mid", robot.myBigServoArmMid.getPower());
+            ///telemetry.addData("Arm Mid", robot.myBigServoArmMid.getPower());
             //telemetry.addData("Direction", myBigServoArmMid.getDirection());
-            telemetry.addData("Arm Claw", robot.myBigServoClaw.getPower());
+            //telemetry.addData("Arm Claw", robot.myBigServoClaw.getPower());
             telemetry.update();
         }
     }

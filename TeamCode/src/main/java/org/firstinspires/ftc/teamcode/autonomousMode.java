@@ -125,7 +125,7 @@ public class autonomousMode extends LinearOpMode {
         encoderDrive(DRIVE_SPEED, -18.5, 18.5, 4.0);
         encoderDrive(DRIVE_SPEED, 17, 17, 4.0);
         encoderDrive(DRIVE_SPEED, -18.5, 18.5, 4.0);
-        robot.dropOnBlock();
+        //robot.dropOnBlock();
         encoderDrive(DRIVE_SPEED, 40, 40, 4.0);
 
         //robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
