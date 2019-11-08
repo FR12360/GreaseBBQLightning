@@ -30,13 +30,13 @@ public class greaseBBQLightning
     DcMotor myBigMotorBackLeft = null;
     DcMotor myBigMotorBackRight = null;
     DcMotor myBigMotorRandP = null;
-    //CRServo myBigServoArmBase = null;
-    //CRServo myBigServoArmMid = null;
+    CRServo myBigServoLeftClaw = null;
+    CRServo myBigServoRightClaw = null;
     //CRServo myBigServoClaw = null;
 
-    double servoPowerArmBase;
-    double servoPowerArmMid;
-    double servoPowerArmClaw;
+    double leftClawPower = -4;
+    double rightClawPower = 4;
+    //double servoPowerArmClaw;
 
     private void sleep(long milliseconds) {
         try {
@@ -125,15 +125,14 @@ public class greaseBBQLightning
         //myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize servos
-        /*myBigServoArmBase = hwMap.get(CRServo.class, "myBigServoArmBase");
-        myBigServoArmMid = hwMap.get(CRServo.class, "myBigServoArmMid");
-        myBigServoClaw = hwMap.get(CRServo.class, "myBigServoClaw");
+        myBigServoLeftClaw = hwMap.get(CRServo.class, "myBigServoLeftClaw");
+        myBigServoRightClaw = hwMap.get(CRServo.class, "myBigServoRightClaw");
+        /*myBigServoClaw = hwMap.get(CRServo.class, "myBigServoClaw");
         myBigServoArmBase.setDirection(CRServo.Direction.REVERSE);
         */
         // Set all servos to initial power
-        /*myBigServoArmBase.setPower(servoPowerArmBase);
-        myBigServoArmMid.setPower(servoPowerArmMid);
-        myBigServoClaw.setPower(servoPowerArmClaw);
-        */
+        myBigServoLeftClaw.setPower(leftClawPower);
+        myBigServoRightClaw.setPower(rightClawPower);
+        //myBigServoClaw.setPower(servoPowerArmClaw);
     }
 }

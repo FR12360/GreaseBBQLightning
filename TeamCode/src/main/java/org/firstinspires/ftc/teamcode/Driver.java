@@ -118,18 +118,26 @@ public class Driver extends LinearOpMode {
 
             if(this.gamepad1.b){
                 //robot.dropOnBlock();
-                robot.myBigMotorRandP.setPower(-.5);
+                runtime.reset();
+                while(runtime.seconds() < 3) {
+                    robot.myBigMotorRandP.setPower(-.5);
+                }
             }
 
             if(this.gamepad1.a){
                 //robot.grabStone();
-                robot.myBigMotorRandP.setPower(.5);
+                runtime.reset();
+                while(runtime.seconds() < 3) {
+                    robot.myBigMotorRandP.setPower(.5);
+                }
             }
 
             if(this.gamepad1.y){
                 //robot.returnToStart();
             }
 
+            robot.myBigServoLeftClaw.setPower(-this.gamepad1.left_trigger);
+            robot.myBigServoRightClaw.setPower(this.gamepad1.right_trigger);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
