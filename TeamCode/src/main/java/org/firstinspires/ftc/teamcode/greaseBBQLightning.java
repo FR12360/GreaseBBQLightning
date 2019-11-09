@@ -34,8 +34,8 @@ public class greaseBBQLightning
     CRServo myBigServoRightClaw = null;
     //CRServo myBigServoClaw = null;
 
-    double leftClawPower = -4;
-    double rightClawPower = 4;
+    //double leftClawPower = -.4;
+    //double rightClawPower = .2;
     //double servoPowerArmClaw;
 
     private void sleep(long milliseconds) {
@@ -131,8 +131,7 @@ public class greaseBBQLightning
         myBigServoArmBase.setDirection(CRServo.Direction.REVERSE);
         */
         // Set all servos to initial power
-        myBigServoLeftClaw.setPower(leftClawPower);
-        myBigServoRightClaw.setPower(rightClawPower);
+
         //myBigServoClaw.setPower(servoPowerArmClaw);
     }
 }

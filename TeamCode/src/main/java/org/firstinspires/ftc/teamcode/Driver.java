@@ -53,6 +53,10 @@ public class Driver extends LinearOpMode {
     // Declare OpMode members.
     private greaseBBQLightning robot = new greaseBBQLightning();
     private ElapsedTime runtime = new ElapsedTime();
+    private double leftClawPower = 0;
+    private double rightClawPower = 0;
+    private boolean clawUp = false;
+    private boolean stoneGrabbed = false;
 
     @Override
     public void runOpMode() {
@@ -64,8 +68,12 @@ public class Driver extends LinearOpMode {
         // step (using the FTC Robot Controller app on the phone).
         robot.init(hardwareMap);
 
-        robot.myBigMotorRandP.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //Set claw starting position
+        robot.myBigServoLeftClaw.setPower(leftClawPower);
+        robot.myBigServoRightClaw.setPower(rightClawPower);
+
+        //robot.myBigMotorRandP.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //robot.myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -116,33 +124,86 @@ public class Driver extends LinearOpMode {
             robot.myBigMotorFrontRight.setPower(leftPower);
             robot.myBigMotorBackRight.setPower(leftPower);
 
+            //Drop after lowering a lil bit
+            if(this.gamepad1.left_bumper){
+                runtime.reset();
+                /*robot.myBigMotorRandP.setPower(.2);
+                while(runtime.seconds() < .5) {
+                    telemetry.addData("RandP Runtime", "Run Time: " + runtime.toString());
+                    telemetry.update();
+                }
+                robot.myBigMotorRandP.setPower(0);
+                sleep(100);*/
+                robot.myBigServoLeftClaw.setPower(0);
+                robot.myBigServoRightClaw.setPower(0);
+                stoneGrabbed = false;
+            }
+
+            //Grab block and lift a lil bit
+            if(this.gamepad1.right_bumper){
+                runtime.reset();
+                robot.myBigServoLeftClaw.setPower(-1);
+                robot.myBigServoRightClaw.setPower(1);
+                /*sleep(100);
+                robot.myBigMotorRandP.setPower(-.3);
+                while(runtime.seconds() < .5) {
+                    telemetry.addData("RandP Runtime", "Run Time: " + runtime.toString());
+                    telemetry.update();
+                }
+                robot.myBigMotorRandP.setPower(0);*/
+                stoneGrabbed = true;
+            }
+
+            //lift claw
+            if(this.gamepad1.right_trigger > 0){
+
+
+                while(this.gamepad1.right_trigger > 0) {
+                    robot.myBigMotorRandP.setPower(-.3);
+                    //telemetry.addData("RandP Runtime", "Run Time: " + runtime.toString());
+                    //telemetry.update();
+                }
+                robot.myBigMotorRandP.setPower(0);
+                //clawUp = true;
+            }
+
+            //lower claw
+            if(this.gamepad1.left_trigger > 0){
+
+
+                while(this.gamepad1.left_trigger > 0) {
+                    robot.myBigMotorRandP.setPower(.3);
+                    //telemetry.addData("RandP Runtime", "Run Time: " + runtime.toString());
+                    //telemetry.update();
+                }
+                robot.myBigMotorRandP.setPower(0);
+                //clawUp = true;
+            }
+
+
+            //Drop onto building station
+            /*
             if(this.gamepad1.b){
-                //robot.dropOnBlock();
                 runtime.reset();
-                while(runtime.seconds() < 3) {
-                    robot.myBigMotorRandP.setPower(-.5);
+                robot.myBigMotorRandP.setPower(.2);
+                while(runtime.seconds() < 2.5) {
+                    telemetry.addData("RandP Runtime", "Run Time: " + runtime.toString());
+                    telemetry.update();
                 }
+                robot.myBigMotorRandP.setPower(0);
+                sleep(100);
+                robot.myBigServoLeftClaw.setPower(0);
+                robot.myBigServoRightClaw.setPower(0);
+                clawUp = false;
+                stoneGrabbed = false;
             }
-
-            if(this.gamepad1.a){
-                //robot.grabStone();
-                runtime.reset();
-                while(runtime.seconds() < 3) {
-                    robot.myBigMotorRandP.setPower(.5);
-                }
-            }
-
-            if(this.gamepad1.y){
-                //robot.returnToStart();
-            }
-
-            robot.myBigServoLeftClaw.setPower(-this.gamepad1.left_trigger);
-            robot.myBigServoRightClaw.setPower(this.gamepad1.right_trigger);
-
+            */
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-            telemetry.addData("Rack and Pinion Motor",  "Starting at %7d", robot.myBigMotorFrontRight.getCurrentPosition());
+            //telemetry.addData("Left Trigger", this.gamepad1.left_trigger);
+            //telemetry.addData("Left Trigger", this.gamepad1.right_trigger);
+            //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+            //telemetry.addData("Rack and Pinion Motor",  "Starting at %7d", robot.myBigMotorFrontRight.getCurrentPosition());
             //telemetry.addData("Front Left Motor Power", myBigMotorFrontLeft.getPower());
             //telemetry.addData("Front Right Motor Power", myBigMotorFrontRight.getPower());
             //telemetry.addData("Back Left Motor Power", myBigMotorBackLeft.getPower());
