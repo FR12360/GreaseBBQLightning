@@ -32,7 +32,7 @@ public class greaseBBQLightning
     DcMotor myBigMotorRandP = null;
     CRServo myBigServoLeftClaw = null;
     CRServo myBigServoRightClaw = null;
-    //CRServo myBigServoClaw = null;
+    CRServo myBigServoFoundationMover = null;
 
     //double leftClawPower = -.4;
     //double rightClawPower = .2;
@@ -127,9 +127,8 @@ public class greaseBBQLightning
         // Define and initialize servos
         myBigServoLeftClaw = hwMap.get(CRServo.class, "myBigServoLeftClaw");
         myBigServoRightClaw = hwMap.get(CRServo.class, "myBigServoRightClaw");
-        /*myBigServoClaw = hwMap.get(CRServo.class, "myBigServoClaw");
-        myBigServoArmBase.setDirection(CRServo.Direction.REVERSE);
-        */
+        myBigServoFoundationMover = hwMap.get(CRServo.class, "myBigServoFoundationMover");
+
         // Set all servos to initial power
 
         //myBigServoClaw.setPower(servoPowerArmClaw);

@@ -56,8 +56,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *  This code uses the RUN_TO_POSITION mode to enable the Motor controllers to generate the run profile
  */
 
-@Autonomous(name="Right - Move Foundation and Park")
-public class autonomousMode extends LinearOpMode {
+@Autonomous(name="Left - Move Foundation and Park")
+public class autonomousModeLeft extends LinearOpMode {
 
     /* Declare OpMode members. */
     greaseBBQLightning      robot   = new greaseBBQLightning();   // Use a Grease BBQ Lighting Hardware Setup
@@ -116,13 +116,14 @@ public class autonomousMode extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        //sleep(15000);
 
         //Reverse to foundation
         encoderDrive(DRIVE_SPEED,  -35,  -35, 5.0);
         robot.myBigServoFoundationMover.setPower(1);
         sleep(500);
         encoderDrive(DRIVE_SPEED,  32,  32, 5.0);
-        encoderDrive(TURN_SPEED,   9.25, -9.25, 4.0);
+        encoderDrive(TURN_SPEED,   -9.25, 9.25, 4.0);
         robot.myBigServoFoundationMover.setPower(-.7);
 
         // Step through each leg of the path,
@@ -130,7 +131,7 @@ public class autonomousMode extends LinearOpMode {
         //encoderDrive(DRIVE_SPEED,  -4,  -4, 5.0);
 
         //Turn Right
-        encoderDrive(TURN_SPEED,   9.25, -9.25, 4.0);
+        encoderDrive(TURN_SPEED,   -9.25, 9.25, 4.0);
         encoderDrive(DRIVE_SPEED,  42,  42, 5.0);
         /*
         encoderDrive(DRIVE_SPEED, 50, 50, 4.0);
