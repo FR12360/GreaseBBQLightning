@@ -34,6 +34,7 @@ public class greaseBBQLightning
     CRServo myBigServoRightClaw = null;
     CRServo myBigServoFoundationMover = null;
 
+    int rAndPHeight = 0;
     //double leftClawPower = -.4;
     //double rightClawPower = .2;
     //double servoPowerArmClaw;

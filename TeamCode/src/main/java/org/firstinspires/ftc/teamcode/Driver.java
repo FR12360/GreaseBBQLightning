@@ -126,7 +126,7 @@ public class Driver extends LinearOpMode {
             robot.myBigMotorFrontRight.setPower(leftPower);
             robot.myBigMotorBackRight.setPower(leftPower);
 
-            //Drop after lowering a lil bit
+            //Open claw
             if(this.gamepad1.left_bumper){
                 runtime.reset();
                 /*robot.myBigMotorRandP.setPower(.2);
@@ -162,8 +162,7 @@ public class Driver extends LinearOpMode {
 
                 while(this.gamepad1.right_trigger > 0) {
                     robot.myBigMotorRandP.setPower(-.3);
-                    //telemetry.addData("RandP Runtime", "Run Time: " + runtime.toString());
-                    //telemetry.update();
+                    robot.rAndPHeight += 1;
                 }
                 robot.myBigMotorRandP.setPower(0);
             }
@@ -174,8 +173,7 @@ public class Driver extends LinearOpMode {
 
                 while(this.gamepad1.left_trigger > 0) {
                     robot.myBigMotorRandP.setPower(.3);
-                    //telemetry.addData("RandP Runtime", "Run Time: " + runtime.toString());
-                    //telemetry.update();
+                    robot.rAndPHeight -= 1;
                 }
                 robot.myBigMotorRandP.setPower(0);
             }
@@ -205,6 +203,8 @@ public class Driver extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("RandP Height", "Height Counter: " + robot.rAndPHeight);
+            telemetry.update();
             //telemetry.addData("Left Trigger", this.gamepad1.left_trigger);
             //telemetry.addData("Left Trigger", this.gamepad1.right_trigger);
             //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
