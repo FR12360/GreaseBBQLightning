@@ -1,8 +1,57 @@
+/**This is essentially the folder where all your code files for
+ * your robot will reside. As of now for FTC 2020, all code files
+ * must reside in the "teamcode" folder. If you look at your folder
+ * structure most likely on the left hand side of android studio,
+ * it should look something like below:
+ *
+ * ProjectName (Whatever you named your project when you created it for the first time)
+ * |--.gradle
+ * |--.idea
+ * |--doc
+ * |--FtcRobotController
+ * |--gradle
+ * |--libs
+ * |+-- TeamCode
+ * |    |--build
+ * |    |+--src
+ * |    |   |+--main
+ * |    |   |   |+--java
+ * |    |   |   |   |+--org <----THE PACKAGE FOLDER LOCATION BEGINS HERE UNDER THE "JAVA" FOLDER
+ * |    |   |   |   |   |+--firstinspires
+ * |    |   |   |   |   |   |+--ftc
+ * |    |   |   |   |   |   |   |+--teamcode
+ * |    |   |   |   |   |   |   |   |--file1.java <----These are your files containing all your
+ * |    |   |   |   |   |   |   |   |--file2.java       code.
+ * |    |   |   |   |   |   |   |   |--file3.java
+ *
+ *                                      ---------
+ *                  |org.                       |
+ *                      |firstinspires.         | org.firstinspires.ftc.teamcode
+ *                          |ftc.               |
+ *                              |teamcode       |
+ *                                      ---------
+ *
+ * This is an object type "package". A package is simply a portion of the entire application.
+ * Files (also referred to as classes) inside each package can only reference
+ * each other for the most part. External libraries or packages can be imported as you will see
+ * in the next section.
+*/
 package org.firstinspires.ftc.teamcode;
+
+/**
+ * Below are the imported libraries. These libraries contain code that has already been written
+ * and compiled for use by FTC. As you can see, there are libraries for every hardware type
+ * allowed, so before we can begin to declare, modify, and control our hardware, such as our motors,
+ * we need to make sure we import the necessary library that contains all the FTC code. In the case
+ * of motor control, we would need to import the DcMotor library which can be referenced with the
+ * path "com.qualcomm.robotcore.hardware.DcMotor". The path to reference these precompiled libraries
+ * is usually given to use in a manual or in the sample code provided. These libraries are stored in
+ * the "libs" folder in the root(main) folder of your project.
+ */
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+//import com.qualcomm.robotcore.hardware.DcMotorSimple; May be redundant with DcMotor
 import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -10,19 +59,55 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * This is NOT an opmode.
- * This class defines our robot class
- * It contains the robot's hardware configuration
+ * This class defines our robot class.
+ * It contains the robot's hardware configuration.
+ * We will reference this class in many of our other classes.
+ * The reason for creating an "object class" like this one is to organize and group together
+ * similar objects which will help our code stay organized. Also, if we need to use our robot class
+ * in multiple classes, we won't have to write all of this code again. Last but not least, if we
+ * change any of the hardware on our robot, we only need to update this object class instead of
+ * having to find and update all the classes that uses our robot's hardware. Below we will keep
+ * an updated list of the hardware on our robot along with the last date it was updated and by who.
  *
- * Motor channel:  Front Left drive motor:      "myBigMotorFrontLeft"
- * Motor channel:  Front Right drive motor:     "myBigMotorFrontRight"
- * Motor channel:  Back Left drive motor:       "myBigMotorBackLeft"
- * Motor channel:  Back Right drive motor:      "myBigMotorBackRight"
- * Servo channel:  Servo to claw arm base:      "servoPowerArmBase"
- * Servo channel:  Servo to claw arm mid joint: "servoPowerArmMid"
- * Servo channel:  Servo to claw clamp:         "servoPowerArmClaw"
+ * --------------------------------------------------------------------
+ * ----------------------Wheel Motors----------------------------------
+ * --------------------------------------------------------------------
+ * Rev Exp Hub Motor channel 0: RC Config Name: "myBigMotorFrontLeft"
+ * Rev Exp Hub Motor channel 1: RC Config Name: "myBigMotorFrontRight"
+ * Rev Exp Hub Motor channel 2: RC Config Name: "myBigMotorBackLeft"
+ * Rev Exp Hub Motor channel 3: RC Config Name: "myBigMotorBackRight"
+ * Modern Robotics Motor channel 1: RC Config Name: "myBigMotorRandP"
+ *
+ * --------------------------------------------------------------------
+ * ----------------------------Servos----------------------------------
+ * --------------------------------------------------------------------
+ * Rev Exp Hub Servo channel 3: RC Config Name: "myBigServoFoundationMover"
+ * Rev Exp Hub Servo channel 4: RC Config Name: "myBigServoLeftClaw"
+ * Rev Exp Hub Servo channel 5: RC Config Name: "myBigServoRightClaw"
+ */
+
+/**
+ * This is where we begin our coding. First, we declare our robot object class. We decided to name
+ * our object greaseBBQLightning after the name of the robot. "public class" means that this code
+ * is accessible to all other classes inside our "teamcode" package.
  */
 public class greaseBBQLightning
 {
+    /**
+     * Next, we declare all of our "public" object class members. In this case, we are declaring
+     * all the hardware that we want accessible by the other classes in our package to be able to
+     * modify and control. In our case, we want the other classes to be able to change things like
+     * speed and direction of all our motors and servos. We also make our built-in gyroscope public
+     * just in case we decide to use it. (We aren't at the moment)
+     *
+     * So to declare(create) our members, first we decide what type of hardware it is. For example:
+     * "DcMotor myBigMotorFrontLeft = null;" DcMotor is the member type followed by whatever name we
+     * decide to give it. To make things easier, we named the member the same as what it is named
+     * in the robot controller configuration so that there is no confusion "myBigMotorFrontLeft".
+     * Lastly, we set it equal to "null" which means we set it equal to nothing......for now.
+     * Think of it as a temporary shell that will be filled later when the time is right. We
+     * continue this process for all our "public" members.
+     */
     /* Public OpMode members. */
     Gyroscope imu;
     DcMotor myBigMotorFrontLeft = null;
@@ -34,57 +119,22 @@ public class greaseBBQLightning
     CRServo myBigServoRightClaw = null;
     CRServo myBigServoFoundationMover = null;
 
-    int rAndPHeight = 0;
-    //double leftClawPower = -.4;
-    //double rightClawPower = .2;
-    //double servoPowerArmClaw;
-
-    private void sleep(long milliseconds) {
-        try {
-            Thread.sleep(milliseconds);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    //Function lower claw on top of block
-    /*void dropOnBlock(){
-        //Drop Claw onto stone
-        myBigServoClaw.setPower(.3);
-        sleep(200);
-        myBigServoArmMid.setPower(.3);
-        sleep(200);
-        myBigServoArmBase.setPower(.5);
-    }*/
-
-    //Function Grab stone/Close Claw
-    /*void grabStone() {
-        myBigServoClaw.setPower(1);
-        sleep(500);
-        myBigServoArmBase.setPower(.7);
-        myBigServoArmMid.setPower(-.4);
-    }*/
-
-    //Function Return Claw to Start Position
-    /*void returnToStart() {
-        myBigServoClaw.setPower(1);
-        sleep(500);
-        myBigServoArmMid.setPower(0);
-        sleep(200);
-        myBigServoArmBase.setPower(.25);
-        sleep(200);
-        myBigServoClaw.setPower(.1);
-    }*/
-
+    /**
+     * Here we can begin to declare our local or "private" object class members. These are the
+     * members, or in our case the hardware components, that we do not want other classes to have
+     * access to. Local or "private" members can only be accessed by this object class and none
+     * other. This is useful for class members and variables that we do not want to be changed by
+     * other classes in our package.
+     */
     /* local OpMode members. */
     private HardwareMap hwMap           =  null;
-    //private ElapsedTime period  = new ElapsedTime();
 
+    /**
+     * This is where we create our constructor. 
+     */
     /* Constructor */
     greaseBBQLightning() {
-        //servoPowerArmBase = .25;
-        //servoPowerArmMid = 0;
-        //servoPowerArmClaw = .1;
+
     }
 
     /* Initialize standard Hardware interfaces */
@@ -110,7 +160,6 @@ public class greaseBBQLightning
         myBigMotorRandP.setPower(0);
 
         // Set Direction of motors
-
         myBigMotorBackLeft.setDirection(DcMotor.Direction.FORWARD);
         myBigMotorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
         myBigMotorBackRight.setDirection(DcMotor.Direction.REVERSE);
@@ -130,8 +179,5 @@ public class greaseBBQLightning
         myBigServoRightClaw = hwMap.get(CRServo.class, "myBigServoRightClaw");
         myBigServoFoundationMover = hwMap.get(CRServo.class, "myBigServoFoundationMover");
 
-        // Set all servos to initial power
-
-        //myBigServoClaw.setPower(servoPowerArmClaw);
     }
 }
