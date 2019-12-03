@@ -52,6 +52,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 //import com.qualcomm.robotcore.hardware.DcMotorSimple; May be redundant with DcMotor
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -69,14 +70,20 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * having to find and update all the classes that uses our robot's hardware. Below we will keep
  * an updated list of the hardware on our robot along with the last date it was updated and by who.
  *
+ * Last Updated: 11/27/2019 by MJ
  * --------------------------------------------------------------------
- * ----------------------Wheel Motors----------------------------------
+ * -----------------------Wheel Motors---------------------------------
  * --------------------------------------------------------------------
  * Rev Exp Hub Motor channel 0: RC Config Name: "myBigMotorFrontLeft"
  * Rev Exp Hub Motor channel 1: RC Config Name: "myBigMotorFrontRight"
  * Rev Exp Hub Motor channel 2: RC Config Name: "myBigMotorBackLeft"
  * Rev Exp Hub Motor channel 3: RC Config Name: "myBigMotorBackRight"
- * Modern Robotics Motor channel 1: RC Config Name: "myBigMotorRandP"
+ *
+ * --------------------------------------------------------------------
+ * -----------------------Other Motors---------------------------------
+ * --------------------------------------------------------------------
+ * Modern Robotics Motor channel 1: RC Config Name: "myBigMotorFoundation"
+ * Modern Robotics Motor channel 2: RC Config Name: "myBigMotorRandP"
  *
  * --------------------------------------------------------------------
  * ----------------------------Servos----------------------------------
@@ -114,9 +121,10 @@ public class greaseBBQLightning
     DcMotor myBigMotorFrontRight = null;
     DcMotor myBigMotorBackLeft = null;
     DcMotor myBigMotorBackRight = null;
-    DcMotor myBigMotorRandP = null;
-    CRServo myBigServoLeftClaw = null;
-    CRServo myBigServoRightClaw = null;
+    ////DcMotor myBigMotorRandP = null;
+    ////DcMotor myBigMotorFoundation = null;
+    //CRServo myBigServoLeftClaw = null;
+    //CRServo myBigServoRightClaw = null;
     CRServo myBigServoFoundationMover = null;
 
     /**
@@ -150,33 +158,37 @@ public class greaseBBQLightning
         myBigMotorFrontRight = hwMap.get(DcMotor.class, "myBigMotorFrontRight");
         myBigMotorBackLeft = hwMap.get(DcMotor.class, "myBigMotorBackLeft");
         myBigMotorBackRight = hwMap.get(DcMotor.class, "myBigMotorBackRight");
-        myBigMotorRandP = hwMap.get(DcMotor.class, "myBigMotorRandP");
+        ////myBigMotorRandP = hwMap.get(DcMotor.class, "myBigMotorRandP");
+        ////myBigMotorFoundation = hwMap.get(DcMotor.class, "myBigMotorFoundation");
 
         // Set all motors to zero power
         myBigMotorBackLeft.setPower(0);
         myBigMotorBackRight.setPower(0);
         myBigMotorFrontLeft.setPower(0);
         myBigMotorFrontRight.setPower(0);
-        myBigMotorRandP.setPower(0);
+       //// myBigMotorRandP.setPower(0);
+       //// myBigMotorFoundation.setPower(0);
 
         // Set Direction of motors
         myBigMotorBackLeft.setDirection(DcMotor.Direction.FORWARD);
         myBigMotorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
         myBigMotorBackRight.setDirection(DcMotor.Direction.REVERSE);
         myBigMotorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-        myBigMotorRandP.setDirection(DcMotor.Direction.FORWARD);
+       //// myBigMotorRandP.setDirection(DcMotor.Direction.REVERSE);
+       //// myBigMotorFoundation.setDirection(DcMotor.Direction.FORWARD);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        myBigMotorFoundation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize servos
-        myBigServoLeftClaw = hwMap.get(CRServo.class, "myBigServoLeftClaw");
-        myBigServoRightClaw = hwMap.get(CRServo.class, "myBigServoRightClaw");
+        //myBigServoLeftClaw = hwMap.get(CRServo.class, "myBigServoLeftClaw");
+       // myBigServoRightClaw = hwMap.get(CRServo.class, "myBigServoRightClaw");
         myBigServoFoundationMover = hwMap.get(CRServo.class, "myBigServoFoundationMover");
 
     }

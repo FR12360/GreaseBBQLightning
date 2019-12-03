@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -55,7 +56,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *  There are other ways to perform encoder based moves, but this method is probably the simplest.
  *  This code uses the RUN_TO_POSITION mode to enable the Motor controllers to generate the run profile
  */
-
+@Disabled
 @Autonomous(name="Right - Move Foundation and Park")
 public class autonomousMode extends LinearOpMode {
 
@@ -119,11 +120,11 @@ public class autonomousMode extends LinearOpMode {
 
         //Reverse to foundation
         encoderDrive(DRIVE_SPEED,  -35,  -35, 5.0);
-        robot.myBigServoFoundationMover.setPower(1);
+        //robot.myBigServoFoundationMover.setPower(1);
         sleep(500);
         encoderDrive(DRIVE_SPEED,  32,  32, 5.0);
         encoderDrive(TURN_SPEED,   9.25, -9.25, 4.0);
-        robot.myBigServoFoundationMover.setPower(-.7);
+        //robot.myBigServoFoundationMover.setPower(-.7);
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)

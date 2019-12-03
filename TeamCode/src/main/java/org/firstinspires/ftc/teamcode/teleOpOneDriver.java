@@ -31,7 +31,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -46,9 +45,9 @@ import com.qualcomm.robotcore.util.Range;
  *
  */
 
-@TeleOp(name="Driver Mode")
+@TeleOp(name="One Driver Tank", group="Tank Drivetrain")
 
-public class Driver extends LinearOpMode {
+public class teleOpOneDriver extends LinearOpMode {
 
     // Declare OpMode members.
     private greaseBBQLightning robot = new greaseBBQLightning();
@@ -70,9 +69,9 @@ public class Driver extends LinearOpMode {
         robot.init(hardwareMap);
 
         //Set claw starting position
-        robot.myBigServoLeftClaw.setPower(leftClawPower);
-        robot.myBigServoRightClaw.setPower(rightClawPower);
-        robot.myBigServoFoundationMover.setPower(rearClawPower);
+        //robot.myBigServoLeftClaw.setPower(leftClawPower);
+        //robot.myBigServoRightClaw.setPower(rightClawPower);
+        //robot.myBigServoFoundationMover.setPower(rearClawPower);
 
         //robot.myBigMotorRandP.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //robot.myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -136,16 +135,16 @@ public class Driver extends LinearOpMode {
                 }
                 robot.myBigMotorRandP.setPower(0);
                 sleep(100);*/
-                robot.myBigServoLeftClaw.setPower(0);
-                robot.myBigServoRightClaw.setPower(0);
+                //robot.myBigServoLeftClaw.setPower(0);
+                //robot.myBigServoRightClaw.setPower(0);
                 stoneGrabbed = false;
             }
 
             //Grab block
             if(this.gamepad1.right_bumper){
                 runtime.reset();
-                robot.myBigServoLeftClaw.setPower(-1);
-                robot.myBigServoRightClaw.setPower(1);
+                //robot.myBigServoLeftClaw.setPower(-1);
+                //robot.myBigServoRightClaw.setPower(1);
                 /*sleep(100);
                 robot.myBigMotorRandP.setPower(-.3);
                 while(runtime.seconds() < .5) {
@@ -161,10 +160,9 @@ public class Driver extends LinearOpMode {
 
 
                 while(this.gamepad1.right_trigger > 0) {
-                    robot.myBigMotorRandP.setPower(-.3);
-                    robot.rAndPHeight += 1;
+                   //// robot.myBigMotorRandP.setPower(-.3);
                 }
-                robot.myBigMotorRandP.setPower(0);
+                ////robot.myBigMotorRandP.setPower(0);
             }
 
             //lower claw
@@ -172,10 +170,9 @@ public class Driver extends LinearOpMode {
 
 
                 while(this.gamepad1.left_trigger > 0) {
-                    robot.myBigMotorRandP.setPower(.3);
-                    robot.rAndPHeight -= 1;
+                    ////robot.myBigMotorRandP.setPower(.3);
                 }
-                robot.myBigMotorRandP.setPower(0);
+                ////robot.myBigMotorRandP.setPower(0);
             }
 
 
@@ -183,8 +180,8 @@ public class Driver extends LinearOpMode {
 
             if(this.gamepad1.b){
 
-               if(!foundationClawUp){
-                    robot.myBigServoFoundationMover.setPower(1);
+                if(!foundationClawUp){
+                    //robot.myBigServoFoundationMover.setPower(1);
                     foundationClawUp = true;
                 }
 
@@ -194,7 +191,7 @@ public class Driver extends LinearOpMode {
             if(this.gamepad1.y){
 
                 if(foundationClawUp){
-                    robot.myBigServoFoundationMover.setPower(rearClawPower);
+                    //robot.myBigServoFoundationMover.setPower(rearClawPower);
                     foundationClawUp = false;
                 }
 
@@ -202,9 +199,6 @@ public class Driver extends LinearOpMode {
 
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("RandP Height", "Height Counter: " + robot.rAndPHeight);
-            telemetry.update();
             //telemetry.addData("Left Trigger", this.gamepad1.left_trigger);
             //telemetry.addData("Left Trigger", this.gamepad1.right_trigger);
             //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
