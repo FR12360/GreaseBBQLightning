@@ -122,7 +122,8 @@ public class greaseBBQLightning
     DcMotor myBigMotorBackLeft = null;
     DcMotor myBigMotorBackRight = null;
     ////DcMotor myBigMotorRandP = null;
-    ////DcMotor myBigMotorFoundation = null;
+    DcMotor myBigMotorFoundation = null;
+    DcMotor myBigMotorRightLifter = null;
     //CRServo myBigServoLeftClaw = null;
     //CRServo myBigServoRightClaw = null;
     CRServo myBigServoFoundationMover = null;
@@ -159,7 +160,8 @@ public class greaseBBQLightning
         myBigMotorBackLeft = hwMap.get(DcMotor.class, "myBigMotorBackLeft");
         myBigMotorBackRight = hwMap.get(DcMotor.class, "myBigMotorBackRight");
         ////myBigMotorRandP = hwMap.get(DcMotor.class, "myBigMotorRandP");
-        ////myBigMotorFoundation = hwMap.get(DcMotor.class, "myBigMotorFoundation");
+        myBigMotorFoundation = hwMap.get(DcMotor.class, "myBigMotorFoundation");
+        myBigMotorRightLifter = hwMap.get(DcMotor.class, "myBigMotorRightLifter");
 
         // Set all motors to zero power
         myBigMotorBackLeft.setPower(0);
@@ -167,7 +169,8 @@ public class greaseBBQLightning
         myBigMotorFrontLeft.setPower(0);
         myBigMotorFrontRight.setPower(0);
        //// myBigMotorRandP.setPower(0);
-       //// myBigMotorFoundation.setPower(0);
+        myBigMotorFoundation.setPower(0);
+        myBigMotorRightLifter.setPower(0);
 
         // Set Direction of motors
         myBigMotorBackLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -175,16 +178,18 @@ public class greaseBBQLightning
         myBigMotorBackRight.setDirection(DcMotor.Direction.REVERSE);
         myBigMotorFrontRight.setDirection(DcMotor.Direction.REVERSE);
        //// myBigMotorRandP.setDirection(DcMotor.Direction.REVERSE);
-       //// myBigMotorFoundation.setDirection(DcMotor.Direction.FORWARD);
+        myBigMotorFoundation.setDirection(DcMotor.Direction.FORWARD);
+        myBigMotorRightLifter.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-//        myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        myBigMotorFoundation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        ////myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        myBigMotorFoundation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        myBigMotorRightLifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize servos
         //myBigServoLeftClaw = hwMap.get(CRServo.class, "myBigServoLeftClaw");
