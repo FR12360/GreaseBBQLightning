@@ -124,6 +124,12 @@ public class teleOpMecanumOneDriver extends OpMode {
             robot.myBigMotorFoundation.setPower(.25);
         }
 */
+        //Turn on rear lifters
+        if(this.gamepad1.a){
+            //robot.myBigServoFoundationMover.setPower(-1);
+            robot.myBigMotorFoundation.setPower(.5);
+            robot.myBigMotorRightLifter.setPower(.5);
+        }
 //        telemetry.addData("course", course);
 //        telemetry.addData("velocity", velocity);
 //        telemetry.addData("rotation", rotation);
