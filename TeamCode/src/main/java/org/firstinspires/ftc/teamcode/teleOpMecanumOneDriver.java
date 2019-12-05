@@ -58,6 +58,16 @@ public class teleOpMecanumOneDriver extends OpMode {
     @Override
     public void loop() {
 
+        //Run the holonomic formulas for each wheel
+        final double lf = gamepad1.left_stick_y - gamepad1.left_stick_x - (gamepad1.right_stick_x * .7f);
+        final double rf = gamepad1.left_stick_y + gamepad1.left_stick_x + (gamepad1.right_stick_x * .7f);
+        final double lr = gamepad1.left_stick_y + gamepad1.left_stick_x - (gamepad1.right_stick_x * .7f);
+        final double rr = gamepad1.left_stick_y - gamepad1.left_stick_x + (gamepad1.right_stick_x * .7f);
+
+        robot.myBigMotorFrontLeft.setPower(Range.clip(lf, -1, 1));
+        robot.myBigMotorFrontRight.setPower(Range.clip(rf, -1, 1));
+        robot.myBigMotorBackLeft.setPower(Range.clip(lr, -1, 1));
+        robot.myBigMotorBackRight.setPower(Range.clip(rr, -1, 1));
 
         //Rack and Pinion Motor Control
 /**
@@ -114,18 +124,12 @@ public class teleOpMecanumOneDriver extends OpMode {
             robot.myBigMotorFoundation.setPower(.25);
         }
 */
-        //Rear Stone Lifters
-        if(this.gamepad1.y){
+        //Turn on rear lifters
+        if(this.gamepad1.a){
+            //robot.myBigServoFoundationMover.setPower(-1);
             robot.myBigMotorFoundation.setPower(.5);
             robot.myBigMotorRightLifter.setPower(.5);
         }
-
-        //Rear Stone Lifters
-        if(this.gamepad1.a){
-            robot.myBigMotorFoundation.setPower(.25);
-            robot.myBigMotorRightLifter.setPower(.5);
-        }
-
 //        telemetry.addData("course", course);
 //        telemetry.addData("velocity", velocity);
 //        telemetry.addData("rotation", rotation);

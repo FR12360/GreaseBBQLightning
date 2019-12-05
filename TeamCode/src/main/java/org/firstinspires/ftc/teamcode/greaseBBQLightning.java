@@ -124,6 +124,7 @@ public class greaseBBQLightning
     ////DcMotor myBigMotorRandP = null;
     DcMotor myBigMotorFoundation = null;
     DcMotor myBigMotorRightLifter = null;
+
     //CRServo myBigServoLeftClaw = null;
     //CRServo myBigServoRightClaw = null;
     CRServo myBigServoFoundationMover = null;
@@ -183,13 +184,12 @@ public class greaseBBQLightning
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        ////myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        myBigMotorFoundation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        myBigMotorRightLifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        myBigMotorFoundation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize servos
         //myBigServoLeftClaw = hwMap.get(CRServo.class, "myBigServoLeftClaw");
