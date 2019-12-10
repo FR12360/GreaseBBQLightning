@@ -57,7 +57,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *  This code uses the RUN_TO_POSITION mode to enable the Motor controllers to generate the run profile
  */
 @Disabled
-@Autonomous(name="Left - Park Only")
+@Autonomous(name="Blue Left - Park Only")
 public class autonomousModeLeftParkOnly extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -109,23 +109,19 @@ public class autonomousModeLeftParkOnly extends LinearOpMode {
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0",  "Starting at %7d :%7d :%7d :%7d",
-                                  robot.myBigMotorFrontRight.getCurrentPosition(),
-                                  robot.myBigMotorFrontLeft.getCurrentPosition(),
-                                  robot.myBigMotorBackLeft.getCurrentPosition(),
-                                  robot.myBigMotorBackRight.getCurrentPosition());
+                robot.myBigMotorFrontRight.getCurrentPosition(),
+                robot.myBigMotorFrontLeft.getCurrentPosition(),
+                robot.myBigMotorBackLeft.getCurrentPosition(),
+                robot.myBigMotorBackRight.getCurrentPosition());
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
-        sleep(15000);
-        //Reverse to foundation
-        encoderDrive(DRIVE_SPEED,  4,  4, 5.0);
-        //Turn Right
-        encoderDrive(TURN_SPEED,   18.5, -18.5, 4.0);
-
-
-        encoderDrive(DRIVE_SPEED,  44,  44, 5.0);
+        robot.myBigServoRightClaw.setPower(-1);
+        robot.myBigServoLeftClaw.setPower(1);
+        robot.myBigServoFoundationRight.setPower(-1);
+        robot.myBigServoFoundationLeft.setPower(1);
+        encoderDrive(DRIVE_SPEED,  55,  -55, -55,55, 5.0);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -140,21 +136,26 @@ public class autonomousModeLeftParkOnly extends LinearOpMode {
      *  3) Driver stops the opmode running.
      */
     public void encoderDrive(double speed,
-                             double leftInches, double rightInches,
+                             double fleftInches, double frightInches,
+                             double bleftInches, double brightInches,
                              double timeoutS) {
-        int newLeftTarget;
-        int newRightTarget;
+        int newfLeftTarget;
+        int newfRightTarget;
+        int newbLeftTarget;
+        int newbRightTarget;
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = robot.myBigMotorFrontLeft.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = robot.myBigMotorFrontRight.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            robot.myBigMotorFrontLeft.setTargetPosition(newLeftTarget);
-            robot.myBigMotorFrontRight.setTargetPosition(newRightTarget);
-            robot.myBigMotorBackLeft.setTargetPosition(newLeftTarget);
-            robot.myBigMotorBackRight.setTargetPosition(newRightTarget);
+            newfLeftTarget = robot.myBigMotorFrontLeft.getCurrentPosition() + (int)(-fleftInches * COUNTS_PER_INCH);
+            newfRightTarget = robot.myBigMotorFrontRight.getCurrentPosition() + (int)(-frightInches * COUNTS_PER_INCH);
+            newbLeftTarget = robot.myBigMotorFrontLeft.getCurrentPosition() + (int)(-bleftInches * COUNTS_PER_INCH);
+            newbRightTarget = robot.myBigMotorFrontRight.getCurrentPosition() + (int)(-brightInches * COUNTS_PER_INCH);
+            robot.myBigMotorFrontLeft.setTargetPosition(newfLeftTarget);
+            robot.myBigMotorFrontRight.setTargetPosition(newfRightTarget);
+            robot.myBigMotorBackLeft.setTargetPosition(newbLeftTarget);
+            robot.myBigMotorBackRight.setTargetPosition(newbRightTarget);
 
             // Turn On RUN_TO_POSITION
             robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -178,7 +179,7 @@ public class autonomousModeLeftParkOnly extends LinearOpMode {
 
             while (opModeIsActive()
                     //&&
-                   //(runtime.seconds() < timeoutS)
+                    //(runtime.seconds() < timeoutS)
                     &&
                     (robot.myBigMotorFrontLeft.isBusy() && robot.myBigMotorFrontRight.isBusy()
                             && robot.myBigMotorBackLeft.isBusy() && robot.myBigMotorBackRight.isBusy())
@@ -187,12 +188,12 @@ public class autonomousModeLeftParkOnly extends LinearOpMode {
             {
 
                 // Display it for the driver.
-                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
+                //telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
                 telemetry.addData("Path2",  "Running at %7d :%7d :%7d :%7d",
-                                            robot.myBigMotorFrontLeft.getCurrentPosition(),
-                                            robot.myBigMotorFrontRight.getCurrentPosition(),
-                                            robot.myBigMotorBackLeft.getCurrentPosition(),
-                                            robot.myBigMotorBackRight.getCurrentPosition());
+                        robot.myBigMotorFrontLeft.getCurrentPosition(),
+                        robot.myBigMotorFrontRight.getCurrentPosition(),
+                        robot.myBigMotorBackLeft.getCurrentPosition(),
+                        robot.myBigMotorBackRight.getCurrentPosition());
                 telemetry.update();
             }
 

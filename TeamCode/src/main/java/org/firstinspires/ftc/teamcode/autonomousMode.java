@@ -56,8 +56,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *  There are other ways to perform encoder based moves, but this method is probably the simplest.
  *  This code uses the RUN_TO_POSITION mode to enable the Motor controllers to generate the run profile
  */
-@Disabled
-@Autonomous(name="Right - Move Foundation and Park")
+//@Disabled
+@Autonomous(name="Blue Right - Move Foundation and Park")
 public class autonomousMode extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -69,7 +69,7 @@ public class autonomousMode extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                       (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 1;
+    static final double     DRIVE_SPEED             = .5;
     static final double     TURN_SPEED              = 0.5;
 
     @Override
@@ -118,12 +118,19 @@ public class autonomousMode extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        //Reverse to foundation
-        encoderDrive(DRIVE_SPEED,  -35,  -35, 5.0);
-        //robot.myBigServoFoundationMover.setPower(1);
+        robot.myBigServoFoundationRight.setPower(-1);
+        robot.myBigServoFoundationLeft.setPower(1);
+        encoderDrive(DRIVE_SPEED,5,5,5,5,5);
+        encoderDrive(DRIVE_SPEED,-20,20,20,-20,7);
+        encoderDrive(DRIVE_SPEED,  60,  60, 60, 60, 5.0);
+        robot.myBigServoFoundationRight.setPower(1);
+        robot.myBigServoFoundationLeft.setPower(-1);
         sleep(500);
-        encoderDrive(DRIVE_SPEED,  32,  32, 5.0);
-        encoderDrive(TURN_SPEED,   9.25, -9.25, 4.0);
+        encoderDrive(DRIVE_SPEED,  -80,  -80, -80,-80, 5.0);
+        robot.myBigServoFoundationRight.setPower(-1);
+        robot.myBigServoFoundationLeft.setPower(1);
+        encoderDrive(DRIVE_SPEED,  55,  -55, -55,55, 5.0);
+        //encoderDrive(TURN_SPEED,   9.25, -9.25, 4.0);
         //robot.myBigServoFoundationMover.setPower(-.7);
 
         // Step through each leg of the path,
@@ -131,8 +138,8 @@ public class autonomousMode extends LinearOpMode {
         //encoderDrive(DRIVE_SPEED,  -4,  -4, 5.0);
 
         //Turn Right
-        encoderDrive(TURN_SPEED,   9.25, -9.25, 4.0);
-        encoderDrive(DRIVE_SPEED,  42,  42, 5.0);
+        //encoderDrive(TURN_SPEED,   9.25, -9.25, 4.0);
+        //encoderDrive(DRIVE_SPEED,  42,  42, 5.0);
         /*
         encoderDrive(DRIVE_SPEED, 50, 50, 4.0);
         encoderDrive(DRIVE_SPEED, -18.5, 18.5, 4.0);
@@ -158,21 +165,26 @@ public class autonomousMode extends LinearOpMode {
      *  3) Driver stops the opmode running.
      */
     public void encoderDrive(double speed,
-                             double leftInches, double rightInches,
+                             double fleftInches, double frightInches,
+                             double bleftInches, double brightInches,
                              double timeoutS) {
-        int newLeftTarget;
-        int newRightTarget;
+        int newfLeftTarget;
+        int newfRightTarget;
+        int newbLeftTarget;
+        int newbRightTarget;
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = robot.myBigMotorFrontLeft.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = robot.myBigMotorFrontRight.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            robot.myBigMotorFrontLeft.setTargetPosition(newLeftTarget);
-            robot.myBigMotorFrontRight.setTargetPosition(newRightTarget);
-            robot.myBigMotorBackLeft.setTargetPosition(newLeftTarget);
-            robot.myBigMotorBackRight.setTargetPosition(newRightTarget);
+            newfLeftTarget = robot.myBigMotorFrontLeft.getCurrentPosition() + (int)(-fleftInches * COUNTS_PER_INCH);
+            newfRightTarget = robot.myBigMotorFrontRight.getCurrentPosition() + (int)(-frightInches * COUNTS_PER_INCH);
+            newbLeftTarget = robot.myBigMotorFrontLeft.getCurrentPosition() + (int)(-bleftInches * COUNTS_PER_INCH);
+            newbRightTarget = robot.myBigMotorFrontRight.getCurrentPosition() + (int)(-brightInches * COUNTS_PER_INCH);
+            robot.myBigMotorFrontLeft.setTargetPosition(newfLeftTarget);
+            robot.myBigMotorFrontRight.setTargetPosition(newfRightTarget);
+            robot.myBigMotorBackLeft.setTargetPosition(newbLeftTarget);
+            robot.myBigMotorBackRight.setTargetPosition(newbRightTarget);
 
             // Turn On RUN_TO_POSITION
             robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -205,7 +217,7 @@ public class autonomousMode extends LinearOpMode {
             {
 
                 // Display it for the driver.
-                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
+                //telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
                 telemetry.addData("Path2",  "Running at %7d :%7d :%7d :%7d",
                                             robot.myBigMotorFrontLeft.getCurrentPosition(),
                                             robot.myBigMotorFrontRight.getCurrentPosition(),

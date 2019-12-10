@@ -74,23 +74,24 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * --------------------------------------------------------------------
  * -----------------------Wheel Motors---------------------------------
  * --------------------------------------------------------------------
- * Rev Exp Hub Motor channel 0: RC Config Name: "myBigMotorFrontLeft"
- * Rev Exp Hub Motor channel 1: RC Config Name: "myBigMotorFrontRight"
- * Rev Exp Hub Motor channel 2: RC Config Name: "myBigMotorBackLeft"
- * Rev Exp Hub Motor channel 3: RC Config Name: "myBigMotorBackRight"
+ * Rev Exp Hub 3 Motor channel 0: RC Config Name: "myBigMotorFrontLeft"
+ * Rev Exp Hub 3 Motor channel 1: RC Config Name: "myBigMotorFrontRight"
+ * Rev Exp Hub 3 Motor channel 2: RC Config Name: "myBigMotorBackLeft"
+ * Rev Exp Hub 3 Motor channel 3: RC Config Name: "myBigMotorBackRight"
  *
  * --------------------------------------------------------------------
  * -----------------------Other Motors---------------------------------
  * --------------------------------------------------------------------
- * Modern Robotics Motor channel 1: RC Config Name: "myBigMotorFoundation"
- * Modern Robotics Motor channel 2: RC Config Name: "myBigMotorRandP"
- *
+ * Rev Exp Hub 2 Motor channel 0: RC Config Name: "myBigMotorRandP"
+ * Rev Exp Hub 2 Motor channel 1: RC Config Name: "myBigMotorRandP"
+ * Rev Exp Hub 2 Motor channel 2: RC Config Name: "myBigMotorRandP"
  * --------------------------------------------------------------------
  * ----------------------------Servos----------------------------------
  * --------------------------------------------------------------------
- * Rev Exp Hub Servo channel 3: RC Config Name: "myBigServoFoundationMover"
- * Rev Exp Hub Servo channel 4: RC Config Name: "myBigServoLeftClaw"
- * Rev Exp Hub Servo channel 5: RC Config Name: "myBigServoRightClaw"
+ * Rev Exp Hub 3 Servo channel 2: RC Config Name: "myBigServoLeftFoundation"
+ * Rev Exp Hub 3 Servo channel 3: RC Config Name: "myBigServoRightFoundation"
+ * Rev Exp Hub 3 Servo channel 4: RC Config Name: "myBigMotorLeftLifter" --Not Connected/Used For Testing
+ * Rev Exp Hub 3 Servo channel 5: RC Config Name: "myBigMotorRightLifter" --Not Connected/Used For Testing
  */
 
 /**
@@ -121,13 +122,14 @@ public class greaseBBQLightning
     DcMotor myBigMotorFrontRight = null;
     DcMotor myBigMotorBackLeft = null;
     DcMotor myBigMotorBackRight = null;
-    ////DcMotor myBigMotorRandP = null;
-    DcMotor myBigMotorFoundation = null;
+    DcMotor myBigMotorRandP = null;
+    DcMotor myBigMotorLeftLifter = null;
     DcMotor myBigMotorRightLifter = null;
 
-    //CRServo myBigServoLeftClaw = null;
-    //CRServo myBigServoRightClaw = null;
-    CRServo myBigServoFoundationMover = null;
+    CRServo myBigServoLeftClaw = null;
+    CRServo myBigServoRightClaw = null;
+    CRServo myBigServoFoundationLeft = null;
+    CRServo myBigServoFoundationRight = null;
 
     /**
      * Here we can begin to declare our local or "private" object class members. These are the
@@ -136,7 +138,12 @@ public class greaseBBQLightning
      * other. This is useful for class members and variables that we do not want to be changed by
      * other classes in our package.
      */
-    /* local OpMode members. */
+
+    /**
+     * The variable type "HardwareMap" comes from the import above "import com.qualcomm.robotcore.hardware.HardwareMap;"
+     * It is used to read the Hardware Configuration that we created on the Robot Controller phone. We named
+     * our variable hwMap.
+     */
     private HardwareMap hwMap           =  null;
 
     /**
@@ -160,8 +167,8 @@ public class greaseBBQLightning
         myBigMotorFrontRight = hwMap.get(DcMotor.class, "myBigMotorFrontRight");
         myBigMotorBackLeft = hwMap.get(DcMotor.class, "myBigMotorBackLeft");
         myBigMotorBackRight = hwMap.get(DcMotor.class, "myBigMotorBackRight");
-        ////myBigMotorRandP = hwMap.get(DcMotor.class, "myBigMotorRandP");
-        myBigMotorFoundation = hwMap.get(DcMotor.class, "myBigMotorFoundation");
+        myBigMotorRandP = hwMap.get(DcMotor.class, "myBigMotorRandP");
+        myBigMotorLeftLifter = hwMap.get(DcMotor.class, "myBigMotorLeftLifter");
         myBigMotorRightLifter = hwMap.get(DcMotor.class, "myBigMotorRightLifter");
 
         // Set all motors to zero power
@@ -169,8 +176,8 @@ public class greaseBBQLightning
         myBigMotorBackRight.setPower(0);
         myBigMotorFrontLeft.setPower(0);
         myBigMotorFrontRight.setPower(0);
-       //// myBigMotorRandP.setPower(0);
-        myBigMotorFoundation.setPower(0);
+        myBigMotorRandP.setPower(0);
+        myBigMotorLeftLifter.setPower(0);
         myBigMotorRightLifter.setPower(0);
 
         // Set Direction of motors
@@ -178,23 +185,26 @@ public class greaseBBQLightning
         myBigMotorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
         myBigMotorBackRight.setDirection(DcMotor.Direction.REVERSE);
         myBigMotorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-       //// myBigMotorRandP.setDirection(DcMotor.Direction.REVERSE);
-        myBigMotorFoundation.setDirection(DcMotor.Direction.FORWARD);
+        myBigMotorRandP.setDirection(DcMotor.Direction.REVERSE);
+        myBigMotorLeftLifter.setDirection(DcMotor.Direction.FORWARD);
         myBigMotorRightLifter.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-//        myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        myBigMotorFoundation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //myBigMotorLeftLifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //myBigMotorRightLifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize servos
-        //myBigServoLeftClaw = hwMap.get(CRServo.class, "myBigServoLeftClaw");
-       // myBigServoRightClaw = hwMap.get(CRServo.class, "myBigServoRightClaw");
-        myBigServoFoundationMover = hwMap.get(CRServo.class, "myBigServoFoundationMover");
+        myBigServoLeftClaw = hwMap.get(CRServo.class, "myBigServoLeftClaw");
+        myBigServoRightClaw = hwMap.get(CRServo.class, "myBigServoRightClaw");
+        myBigServoFoundationLeft = hwMap.get(CRServo.class, "myBigServoFoundationLeft");
+        myBigServoFoundationRight = hwMap.get(CRServo.class, "myBigServoFoundationRight");
 
     }
 }

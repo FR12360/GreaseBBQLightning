@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -44,7 +45,7 @@ import com.qualcomm.robotcore.util.Range;
  * This particular OpMode just executes a basic Tank Drive Teleop for a four wheeled robot
  *
  */
-
+@Disabled
 @TeleOp(name="One Driver Tank", group="Tank Drivetrain")
 
 public class teleOpOneDriver extends LinearOpMode {
