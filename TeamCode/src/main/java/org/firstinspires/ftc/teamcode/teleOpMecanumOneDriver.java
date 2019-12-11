@@ -45,7 +45,6 @@ public class teleOpMecanumOneDriver extends LinearOpMode {
         runtime.reset();
 
         while (opModeIsActive()) {
-
             //Run the holonomic formulas for each wheel
             //This is the easiest implementation for mecanum wheels
             final double lf = gamepad1.left_stick_y - gamepad1.left_stick_x - (gamepad1.right_stick_x * .7f);

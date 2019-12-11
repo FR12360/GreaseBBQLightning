@@ -147,12 +147,16 @@ public class greaseBBQLightning
     private HardwareMap hwMap           =  null;
 
     /**
-     * This is where we create our constructor. 
+     * This is where we create our constructor. A constructor is a specific kind of function used when creating
+     * an object class. A constructor pretty much does what it's name says. It constructs the object when you use it
+     * in other parts of your project. You can have multiple constructors i.e. a constructor that requires different types
+     * of parameters or not and they call will have the same name which is the name of the object class.
      */
     /* Constructor */
     greaseBBQLightning() {
 
     }
+
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
