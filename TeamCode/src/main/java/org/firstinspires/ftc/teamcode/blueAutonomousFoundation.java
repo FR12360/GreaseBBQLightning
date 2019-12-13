@@ -59,8 +59,8 @@ public class blueAutonomousFoundation extends LinearOpMode {
     private ElapsedTime     runtime = new ElapsedTime();
 
     static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHES   = 4 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                       (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = .5;
@@ -83,6 +83,11 @@ public class blueAutonomousFoundation extends LinearOpMode {
             robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.myBigMotorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.myBigMotorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.myBigMotorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.myBigMotorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.myBigMotorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.myBigMotorRandP.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         } catch (Exception e){
             telemetry.addData("Status", "Could not reset");    //
             telemetry.addData("Error", e.getMessage());
@@ -94,6 +99,7 @@ public class blueAutonomousFoundation extends LinearOpMode {
             robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } catch (Exception e){
             telemetry.addData("Status", "Could not run using encoder");    //
             telemetry.addData("Error", e.getMessage());
@@ -111,40 +117,10 @@ public class blueAutonomousFoundation extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
         robot.myBigServoFoundationRight.setPower(-1);
         robot.myBigServoFoundationLeft.setPower(1);
-        encoderDrive(DRIVE_SPEED,5,5,5,5,5);
-        encoderDrive(DRIVE_SPEED,-20,20,20,-20,7);
-        encoderDrive(DRIVE_SPEED,  60,  60, 60, 60, 5.0);
-        robot.myBigServoFoundationRight.setPower(1);
-        robot.myBigServoFoundationLeft.setPower(-1);
-        sleep(500);
-        encoderDrive(DRIVE_SPEED,  -80,  -80, -80,-80, 5.0);
-        robot.myBigServoFoundationRight.setPower(-1);
-        robot.myBigServoFoundationLeft.setPower(1);
-        encoderDrive(DRIVE_SPEED,  55,  -55, -55,55, 5.0);
-        //encoderDrive(TURN_SPEED,   9.25, -9.25, 4.0);
-        //robot.myBigServoFoundationMover.setPower(-.7);
 
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        //encoderDrive(DRIVE_SPEED,  -4,  -4, 5.0);
-
-        //Turn Right
-        //encoderDrive(TURN_SPEED,   9.25, -9.25, 4.0);
-        //encoderDrive(DRIVE_SPEED,  42,  42, 5.0);
-        /*
-        encoderDrive(DRIVE_SPEED, 50, 50, 4.0);
-        encoderDrive(DRIVE_SPEED, -18.5, 18.5, 4.0);
-        encoderDrive(DRIVE_SPEED, 17, 17, 4.0);
-        encoderDrive(DRIVE_SPEED, -18.5, 18.5, 4.0);
-        //robot.dropOnBlock();
-        encoderDrive(DRIVE_SPEED, 40, 40, 4.0);*/
-
-        //robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
-        //robot.rightClaw.setPosition(0.0);
-        //sleep(1000);     // pause for servos to move
+        driveToFoundation(1);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -160,8 +136,7 @@ public class blueAutonomousFoundation extends LinearOpMode {
      */
     public void encoderDrive(double speed,
                              double fleftInches, double frightInches,
-                             double bleftInches, double brightInches,
-                             double timeoutS) {
+                             double bleftInches, double brightInches) {
         int newfLeftTarget;
         int newfRightTarget;
         int newbLeftTarget;
@@ -234,5 +209,19 @@ public class blueAutonomousFoundation extends LinearOpMode {
 
             //  sleep(250);   // optional pause after each move
         }
+    }
+
+    public void driveToFoundation(double speed){
+        robot.myBigMotorRandP.setTargetPosition(1440);
+        robot.myBigMotorRandP.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.myBigMotorRandP.setPower(1);
+        encoderDrive(.5,4,4,4,4);
+        encoderDrive(.5,-6,6,6,-6);
+        encoderDrive(.5,26,26,26,26);
+        robot.myBigMotorRandP.setTargetPosition(0);
+        robot.myBigMotorRandP.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.myBigMotorRandP.setPower(1);
+        sleep(1000);
+        encoderDrive(.5,-30,-30,-30,-30);
     }
 }
