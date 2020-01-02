@@ -83,10 +83,6 @@ public class blueAutonomousFoundation extends LinearOpMode {
             robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.myBigMotorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.myBigMotorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            robot.myBigMotorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            robot.myBigMotorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            robot.myBigMotorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             robot.myBigMotorRandP.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         } catch (Exception e){
             telemetry.addData("Status", "Could not reset");    //
@@ -117,8 +113,7 @@ public class blueAutonomousFoundation extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        robot.myBigServoFoundationRight.setPower(-1);
-        robot.myBigServoFoundationLeft.setPower(1);
+        robot.myBigServoFoundation.setPower(-1);
 
         driveToFoundation(1);
 
@@ -212,16 +207,30 @@ public class blueAutonomousFoundation extends LinearOpMode {
     }
 
     public void driveToFoundation(double speed){
-        robot.myBigMotorRandP.setTargetPosition(1440);
-        robot.myBigMotorRandP.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.myBigMotorRandP.setPower(1);
+        //Raise RandP
+        robot.setRackAndPinionHeight(1440,1);
+        //Move off of wall
         encoderDrive(.5,4,4,4,4);
+        //Strafing left to center to foundation
         encoderDrive(.5,-6,6,6,-6);
-        encoderDrive(.5,26,26,26,26);
-        robot.myBigMotorRandP.setTargetPosition(0);
-        robot.myBigMotorRandP.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.myBigMotorRandP.setPower(1);
+        //Move to foundation
+        encoderDrive(.5,25,25,25,25);
+        //Drop RandP onto Foundation
+        robot.setRackAndPinionHeight(0,1);
+        //Wait for RandP to land on foundation
         sleep(1000);
-        encoderDrive(.5,-30,-30,-30,-30);
+        //Pull foundation backwards to wall
+        encoderDrive(.5,-28,-28,-28,-28);
+        //Lift RandP off of foundation before strafing to park
+        robot.setRackAndPinionHeight(1440,1);
+        //Wait for RandP to clear foundation before strafing
+        sleep(1000);
+        //Start strafing toward parking zone
+        encoderDrive(1,20,-20,-20,20);
+        //Set RandP back down to start position
+        robot.setRackAndPinionHeight(0,1);
+        sleep(1000);
+        //Finish strafing to parking zone
+        encoderDrive(1,23,-23,-23,23);
     }
 }

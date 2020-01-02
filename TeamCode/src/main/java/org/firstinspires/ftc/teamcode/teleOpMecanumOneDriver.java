@@ -34,10 +34,7 @@ public class teleOpMecanumOneDriver extends LinearOpMode {
         robot.myBigMotorLeftLifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.myBigMotorRightLifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        robot.myBigServoRightClaw.setPower(-1);
-        robot.myBigServoLeftClaw.setPower(1);
-        robot.myBigServoFoundationLeft.setPower(1);
-        robot.myBigServoFoundationRight.setPower(-1);
+
 
 
         // Wait for the game to start (driver presses PLAY)
@@ -121,23 +118,19 @@ public class teleOpMecanumOneDriver extends LinearOpMode {
              }
              */
             if (this.gamepad1.right_bumper) {
-                robot.myBigServoRightClaw.setPower(-1);
-                robot.myBigServoLeftClaw.setPower(1);
+                robot.myBigServoClaw.setPower(-1);
             }
 
             if (this.gamepad1.left_bumper) {
-                robot.myBigServoRightClaw.setPower(.5);
-                robot.myBigServoLeftClaw.setPower(-.5);
+                robot.myBigServoClaw.setPower(0);
             }
 
             if (this.gamepad1.y) {
-                robot.myBigServoFoundationLeft.setPower(1);
-                robot.myBigServoFoundationRight.setPower(-1);
+                robot.myBigServoFoundation.setPower(-1);
             }
 
             if (this.gamepad1.x) {
-                robot.myBigServoFoundationLeft.setPower(-1);
-                robot.myBigServoFoundationRight.setPower(1);
+                robot.myBigServoFoundation.setPower(1);
             }
 
             //telemetry.addData("Stone Intake Power", robot.myBigMotorLeftLifter.getPower());

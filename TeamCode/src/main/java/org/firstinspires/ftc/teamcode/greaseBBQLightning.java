@@ -126,10 +126,8 @@ public class greaseBBQLightning
     DcMotor myBigMotorLeftLifter = null;
     DcMotor myBigMotorRightLifter = null;
 
-    CRServo myBigServoLeftClaw = null;
-    CRServo myBigServoRightClaw = null;
-    CRServo myBigServoFoundationLeft = null;
-    CRServo myBigServoFoundationRight = null;
+    CRServo myBigServoClaw = null;
+    CRServo myBigServoFoundation = null;
 
     /**
      * Here we can begin to declare our local or "private" object class members. These are the
@@ -157,6 +155,11 @@ public class greaseBBQLightning
 
     }
 
+    public void setRackAndPinionHeight(int position, double motorPower){
+        myBigMotorRandP.setTargetPosition(position);
+        myBigMotorRandP.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        myBigMotorRandP.setPower(motorPower);
+    }
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
@@ -193,6 +196,11 @@ public class greaseBBQLightning
         myBigMotorLeftLifter.setDirection(DcMotor.Direction.FORWARD);
         myBigMotorRightLifter.setDirection(DcMotor.Direction.REVERSE);
 
+        myBigMotorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        myBigMotorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        myBigMotorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        myBigMotorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
 
@@ -205,10 +213,12 @@ public class greaseBBQLightning
         //myBigMotorRightLifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize servos
-        myBigServoLeftClaw = hwMap.get(CRServo.class, "myBigServoLeftClaw");
-        myBigServoRightClaw = hwMap.get(CRServo.class, "myBigServoRightClaw");
-        myBigServoFoundationLeft = hwMap.get(CRServo.class, "myBigServoFoundationLeft");
-        myBigServoFoundationRight = hwMap.get(CRServo.class, "myBigServoFoundationRight");
+        myBigServoClaw = hwMap.get(CRServo.class, "myBigServoClaw");
+        myBigServoFoundation = hwMap.get(CRServo.class, "myBigServoFoundation");
+
+        //Set all servos to power 0
+        myBigServoClaw.setPower(0);
+        myBigServoFoundation.setPower(0);
 
     }
 }
