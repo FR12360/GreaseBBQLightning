@@ -217,8 +217,8 @@ public class greaseBBQLightning
         myBigServoFoundation = hwMap.get(CRServo.class, "myBigServoFoundation");
 
         //Set all servos to power 0
-        myBigServoClaw.setPower(0);
-        myBigServoFoundation.setPower(0);
+        myBigServoClaw.setPower(.3);
+        myBigServoFoundation.setPower(-1);
 
     }
 }
