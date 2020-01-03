@@ -122,7 +122,7 @@ public class teleOpMecanumOneDriver extends LinearOpMode {
             }
 
             if (this.gamepad1.left_bumper) {
-                robot.myBigServoClaw.setPower(0);
+                robot.myBigServoClaw.setPower(.3);
             }
 
             if (this.gamepad1.y) {
@@ -130,7 +130,7 @@ public class teleOpMecanumOneDriver extends LinearOpMode {
             }
 
             if (this.gamepad1.x) {
-                robot.myBigServoFoundation.setPower(1);
+                robot.myBigServoFoundation.setPower(0);
             }
 
             //telemetry.addData("Stone Intake Power", robot.myBigMotorLeftLifter.getPower());
