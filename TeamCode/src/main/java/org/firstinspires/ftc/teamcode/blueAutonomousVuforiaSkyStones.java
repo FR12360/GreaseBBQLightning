@@ -1,4 +1,4 @@
-/* Copyright (c) 2019 FIRST. All rights reserved.
+/* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -29,9 +29,10 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -45,6 +46,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Math.abs;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
@@ -53,62 +55,39 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.FRONT;
 
 /**
- * This 2019-2020 OpMode illustrates the basics of using the Vuforia localizer to determine
- * positioning and orientation of robot on the SKYSTONE FTC field.
+ * This file illustrates the concept of driving a path based on encoder counts.
  * The code is structured as a LinearOpMode
  *
- * When images are located, Vuforia is able to determine the position and orientation of the
- * image relative to the camera.  This sample code then combines that information with a
- * knowledge of where the target images are on the field, to determine the location of the camera.
+ * The code REQUIRES that you DO have encoders on the wheels,
  *
- * From the Audience perspective, the Red Alliance station is on the right and the
- * Blue Alliance Station is on the left.
-
- * Eight perimeter targets are distributed evenly around the four perimeter walls
- * Four Bridge targets are located on the bridge uprights.
- * Refer to the Field Setup manual for more specific location details
- *
- * A final calculation then uses the location of the camera on the robot to determine the
- * robot's location and orientation on the field.
- *
- * @see VuforiaLocalizer
- * @see VuforiaTrackableDefaultListener
- * see  skystone/doc/tutorial/FTC_FieldCoordinateSystemDefinition.pdf
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
- *
- * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
- * is explained below.
+ *  This code ALSO requires that the drive Motors have been configured such that a positive
+ *  power command moves them forwards, and causes the encoders to count UP.
+ * *
+ *  The code is written using a method called: encoderDrive(speed, leftInches, rightInches, timeoutS)
+ *  that performs the actual movement.
+ *  This methods assumes that each movement is relative to the last stopping place.
+ *  There are other ways to perform encoder based moves, but this method is probably the simplest.
+ *  This code uses the RUN_TO_POSITION mode to enable the Motor controllers to generate the run profile
  */
-
-
-@TeleOp(name="SKYSTONE Vuforia Nav", group ="Concept")
 //@Disabled
-public class vuforiaNavigation extends LinearOpMode {
+@Autonomous(name="Red Left - Find SkyStones")
+public class blueAutonomousVuforiaSkyStones extends LinearOpMode {
 
+    /* Declare OpMode members. */
+    greaseBBQLightning      robot   = new greaseBBQLightning();   // Use a Grease BBQ Lighting Hardware Setup
+    private ElapsedTime     runtime = new ElapsedTime();
 
-    // IMPORTANT:  For Phone Camera, set 1) the camera source and 2) the orientation, based on how your phone is mounted:
-    // 1) Camera Source.  Valid choices are:  BACK (behind screen) or FRONT (selfie side)
-    // 2) Phone Orientation. Choices are: PHONE_IS_PORTRAIT = true (portrait) or PHONE_IS_PORTRAIT = false (landscape)
-    //
-    // NOTE: If you are running on a CONTROL HUB, with only one USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
-    //
+    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHES   = 4 ;     // For figuring circumference
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+                                                      (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double     DRIVE_SPEED             = .5;
+    static final double     TURN_SPEED              = 0.5;
+
+    //Vuforia Stuff
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = FRONT;
     private static final boolean PHONE_IS_PORTRAIT = true;
-
-    /*
-     * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
-     * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
-     * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
-     * web site at https://developer.vuforia.com/license-manager.
-     *
-     * Vuforia license keys are always 380 characters long, and look as if they contain mostly
-     * random data. As an example, here is a example of a fragment of a valid key:
-     *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
-     * Once you've obtained a license key, copy the string from the Vuforia web site
-     * and paste it in to your code on the next line, between the double quotes.
-     */
     private static final String VUFORIA_KEY =
             "AQAe1Ff/////AAABmVOWpgy6pEJmogqArcRgMto5ygtSLgm+JYiAhW1QAESYbOvXP2dQAlnLyzMTrPf6+KvNMMLPS4Agbe/G2RcxOfnFU4UYl3EV013AIxWKOoHkZk7+d/AakkwUqcb4n2xovI311PUFiPTQRcNsCVgpP1tfBU5Vq5MA3nE31GeZYAKZluS7VTDjUqV8sLLSC3/1e9xrum64PdCoaJVCvIpqaN5CUw3ghVA34WmUFM7t6C15YC1JsUQXjqzL6AhPU2k/iWgwyKywfneb1qEP7rAACu4eg9H2WnQQr7uGDqpZAyHqliscmZgL8qIc0gKiPzb90PXhwIbAAowmTB4CAYBcKdMwIg9D70nvuNpaG5HrgOgm";
 
@@ -139,9 +118,21 @@ public class vuforiaNavigation extends LinearOpMode {
     private float phoneYRotate    = 0;
     private float phoneZRotate    = 0;
 
+    private float x = 0;
+    private float y = 0;
+    private float z = 0;
+    private double moveToX = 0;
+    private double moveToY = 0;
+    private boolean skyStoneFound = false;
 
-    @Override public void runOpMode() {
-        //driveTrain.runOpMode();
+    @Override
+    public void runOpMode() {
+
+        /*
+         * Initialize the drive system variables.
+         * The init() method of the hardware class does all the work here
+         */
+        robot.init(hardwareMap);
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          * We can pass Vuforia the handle to a camera preview resource (on the RC phone);
@@ -301,64 +292,227 @@ public class vuforiaNavigation extends LinearOpMode {
         final float CAMERA_LEFT_DISPLACEMENT     = 0;     // eg: Didn't seem to affect output
 
         OpenGLMatrix robotFromCamera = OpenGLMatrix
-                    .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
-                    .multiplied(Orientation.getRotationMatrix(EXTRINSIC, YZX, DEGREES, phoneYRotate, phoneZRotate, phoneXRotate));
+                .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, YZX, DEGREES, phoneYRotate, phoneZRotate, phoneXRotate));
 
         /**  Let all the trackable listeners know where the phone is.  */
         for (VuforiaTrackable trackable : allTrackables) {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
         }
 
-        // WARNING:
-        // In this sample, we do not wait for PLAY to be pressed.  Target Tracking is started immediately when INIT is pressed.
-        // This sequence is used to enable the new remote DS Camera Preview feature to be used with this sample.
-        // CONSEQUENTLY do not put any driving commands in this loop.
-        // To restore the normal opmode structure, just un-comment the following line:
+        robot.myBigMotorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.myBigMotorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.myBigMotorRandP.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        // waitForStart();
 
-        // Note: To use the remote camera preview:
-        // AFTER you hit Init on the Driver Station, use the "options menu" to select "Camera Stream"
-        // Tap the preview window to receive a fresh image.
+        robot.myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        targetsSkyStone.activate();
-        while (!isStopRequested()) {
+        telemetry.update();
 
-            // check all the trackable targets to see which one (if any) is visible.
-            targetVisible = false;
-            for (VuforiaTrackable trackable : allTrackables) {
-                if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                    telemetry.addData("Visible Target", trackable.getName());
-                    targetVisible = true;
+        // Wait for the game to start (driver presses PLAY)
+        waitForStart();
+        runtime.reset();
+        //robot.myBigServoFoundation.setPower(.3);
 
-                    // getUpdatedRobotLocation() will return null if no new information is available since
-                    // the last time that call was made, or if the trackable is not currently visible.
-                    OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
-                    if (robotLocationTransform != null) {
-                        lastLocation = robotLocationTransform;
+        //driveToFoundation(1);
+
+        //telemetry.addData("Path", "Complete");
+        //telemetry.update();
+
+            targetsSkyStone.activate();
+            while (runtime.seconds()<30) {
+                robot.myBigMotorBackLeft.setPower(.1);
+                robot.myBigMotorBackRight.setPower(-.1);
+                robot.myBigMotorFrontLeft.setPower(-.1);
+                robot.myBigMotorFrontRight.setPower(.1);
+                // check all the trackable targets to see which one (if any) is visible.
+                targetVisible = false;
+                for (VuforiaTrackable trackable : allTrackables) {
+                    if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
+                        telemetry.addData("Visible Target", trackable.getName());
+                        targetVisible = true;
+
+                        // getUpdatedRobotLocation() will return null if no new information is available since
+                        // the last time that call was made, or if the trackable is not currently visible.
+                        OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
+                        if (robotLocationTransform != null) {
+                            lastLocation = robotLocationTransform;
+                        }
+                        break;
                     }
-                    break;
+                }
+
+                // Provide feedback as to where the robot is located (if we know).
+                if (targetVisible) {
+                    robot.myBigMotorBackLeft.setPower(0);
+                    robot.myBigMotorBackRight.setPower(0);
+                    robot.myBigMotorFrontLeft.setPower(0);
+                    robot.myBigMotorFrontRight.setPower(0);
+
+                    // express position (translation) of robot in inches.
+                    VectorF translation = lastLocation.getTranslation();
+                    x = (translation.get(0) / mmPerInch) + 2.5f;
+                    y = (translation.get(1) / mmPerInch) - 2.5f;
+                    z = (translation.get(2) / mmPerInch) - 2.5f;
+                    moveToX = x + 5.5;
+                    moveToY = y + 3.5;
+                    skyStoneFound = true;
+
+                    telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+                            x, y, z);
+                    // express the rotation of the robot in degrees.
+                    Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
+                    telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+                }
+                else {
+                    telemetry.addData("Visible Target", "none");
+                }
+                telemetry.update();
+
+                if(skyStoneFound){
+                    targetsSkyStone.deactivate();
+                    //Reset Encoders (dummy)
+                    robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    robot.myBigMotorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    robot.myBigMotorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+                    encoderDrive(.1,moveToY,-moveToY,-moveToY,moveToY);
+                    encoderDrive(.1,-moveToX,-moveToX,-moveToX,-moveToX);
+
+                    //encoderDrive(.3,20,20,20,20);
+                    robot.myBigServoClaw.setPower(1);
+
+                    //encoderDrive(.5,-20,-20,-20,-20);
+                    skyStoneFound = false;
+                    targetsSkyStone.activate();
                 }
             }
 
-            // Provide feedback as to where the robot is located (if we know).
-            if (targetVisible) {
-                // express position (translation) of robot in inches.
-                VectorF translation = lastLocation.getTranslation();
-                telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                        translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
 
-                // express the rotation of the robot in degrees.
-                Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-                telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
-            }
-            else {
-                telemetry.addData("Visible Target", "none");
-            }
-            telemetry.update();
+
+        targetsSkyStone.deactivate();
+            // Disable Tracking when we are done;
+
         }
 
-        // Disable Tracking when we are done;
-        targetsSkyStone.deactivate();
+
+    /*
+     *  Method to perfmorm a relative move, based on encoder counts.
+     *  Encoders are not reset as the move is based on the current position.
+     *  Move will stop if any of three conditions occur:
+     *  1) Move gets to the desired position
+     *  2) Move runs out of time
+     *  3) Driver stops the opmode running.
+     */
+    public void encoderDrive(double speed,
+                             double fleftInches, double frightInches,
+                             double bleftInches, double brightInches) {
+        int newfLeftTarget;
+        int newfRightTarget;
+        int newbLeftTarget;
+        int newbRightTarget;
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+
+            // Determine new target position, and pass to motor controller
+            newfLeftTarget = robot.myBigMotorFrontLeft.getCurrentPosition() + (int)(-fleftInches * COUNTS_PER_INCH);
+            newfRightTarget = robot.myBigMotorFrontRight.getCurrentPosition() + (int)(-frightInches * COUNTS_PER_INCH);
+            newbLeftTarget = robot.myBigMotorFrontLeft.getCurrentPosition() + (int)(-bleftInches * COUNTS_PER_INCH);
+            newbRightTarget = robot.myBigMotorFrontRight.getCurrentPosition() + (int)(-brightInches * COUNTS_PER_INCH);
+            robot.myBigMotorFrontLeft.setTargetPosition(newfLeftTarget);
+            robot.myBigMotorFrontRight.setTargetPosition(newfRightTarget);
+            robot.myBigMotorBackLeft.setTargetPosition(newbLeftTarget);
+            robot.myBigMotorBackRight.setTargetPosition(newbRightTarget);
+
+            // Turn On RUN_TO_POSITION
+            robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //start motion.
+            robot.myBigMotorFrontLeft.setPower(abs(speed));
+            robot.myBigMotorFrontRight.setPower(abs(speed));
+            robot.myBigMotorBackLeft.setPower(abs(speed));
+            robot.myBigMotorBackRight.setPower(abs(speed));
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+
+            while (opModeIsActive()
+                    //&&
+                   //(runtime.seconds() < timeoutS)
+                    &&
+                    (robot.myBigMotorFrontLeft.isBusy() && robot.myBigMotorFrontRight.isBusy()
+                            && robot.myBigMotorBackLeft.isBusy() && robot.myBigMotorBackRight.isBusy())
+            )
+
+            {
+
+                // Display it for the driver.
+                //telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
+                telemetry.addData("Path2",  "Running at %7d :%7d :%7d :%7d",
+                                            robot.myBigMotorFrontLeft.getCurrentPosition(),
+                                            robot.myBigMotorFrontRight.getCurrentPosition(),
+                                            robot.myBigMotorBackLeft.getCurrentPosition(),
+                                            robot.myBigMotorBackRight.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            robot.myBigMotorFrontLeft.setPower(0);
+            robot.myBigMotorFrontRight.setPower(0);
+            robot.myBigMotorBackLeft.setPower(0);
+            robot.myBigMotorBackRight.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //  sleep(250);   // optional pause after each move
+        }
+    }
+
+    public void driveToFoundation(double speed){
+        //Raise RandP
+        robot.setRackAndPinionHeight(1440,1);
+        //Move off of wall
+        encoderDrive(.5,4,4,4,4);
+        //Strafing left to center to foundation
+        encoderDrive(.5,-6,6,6,-6);
+        //Move to foundation
+        encoderDrive(.5,25,25,25,25);
+        //Drop RandP onto Foundation
+        robot.setRackAndPinionHeight(0,1);
+        //Wait for RandP to land on foundation
+        sleep(1000);
+        //Pull foundation backwards to wall
+        encoderDrive(.5,-28,-28,-28,-28);
+        //Lift RandP off of foundation before strafing to park
+        robot.setRackAndPinionHeight(1440,1);
+        //Wait for RandP to clear foundation before strafing
+        sleep(1000);
+        //Start strafing toward parking zone
+        encoderDrive(1,20,-20,-20,20);
+        //Set RandP back down to start position
+        robot.setRackAndPinionHeight(0,1);
+        sleep(1000);
+        //Finish strafing to parking zone
+        encoderDrive(1,23,-23,-23,23);
     }
 }

@@ -55,6 +55,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -128,6 +130,9 @@ public class greaseBBQLightning
 
     CRServo myBigServoClaw = null;
     CRServo myBigServoFoundation = null;
+
+    //ColorSensor myBigColorSensor = null;
+    //DistanceSensor myBigDistanceSensor = null;
 
     /**
      * Here we can begin to declare our local or "private" object class members. These are the
@@ -218,8 +223,15 @@ public class greaseBBQLightning
         myBigServoFoundation = hwMap.get(CRServo.class, "myBigServoFoundation");
 
         //Set all servos to power 0
-        myBigServoClaw.setPower(.3);
+        myBigServoClaw.setPower(-.3);
         myBigServoFoundation.setPower(-1);
+
+        //Define and initialize color/distance sensor
+        //myBigColorSensor = hwMap.get(ColorSensor.class, "myBigColorSensor");
+        //myBigDistanceSensor = hwMap.get(DistanceSensor.class, "myBigColorSensor");
+
+        //Set Led to off
+        //myBigColorSensor.enableLed(false);
 
     }
 }

@@ -115,11 +115,11 @@ public class teleOpMecanumOneDriver extends LinearOpMode {
             //Claw Control
             ///////////////////////////////
             if (this.gamepad1.right_bumper) {
-                robot.myBigServoClaw.setPower(-1);
+                robot.myBigServoClaw.setPower(1);
             }
 
             if (this.gamepad1.left_bumper) {
-                robot.myBigServoClaw.setPower(.3);
+                robot.myBigServoClaw.setPower(-.3);
             }
 
             ///////////////////////////////
