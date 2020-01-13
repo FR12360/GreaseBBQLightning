@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -51,7 +53,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *  This code uses the RUN_TO_POSITION mode to enable the Motor controllers to generate the run profile
  */
 //@Disabled
-@Autonomous(name="Blue Right - Move Foundation and Park")
+@Autonomous(name="Autonomous")
 public class blueAutonomousFoundation extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -66,6 +68,23 @@ public class blueAutonomousFoundation extends LinearOpMode {
     static final double     DRIVE_SPEED             = .5;
     static final double     TURN_SPEED              = 0.5;
 
+    static final double     RED_LOWER_BOUND         = 6;
+    static final double     RED_UPPER_BOUND         = 30;
+    static final double     BLUE_LOWER_BOUND        = 0;
+    static final double     BLUE_UPPER_BOUND        = 0;
+
+    String myBigColor = null;
+
+    // hsvValues is an array that will hold the hue, saturation, and value information.
+    float hsvValues[] = {0F, 0F, 0F};
+
+    // values is a reference to the hsvValues array.
+    final float values[] = hsvValues;
+
+    // sometimes it helps to multiply the raw RGB values with a scale factor
+    // to amplify/attentuate the measured values.
+    final double SCALE_FACTOR = 255;
+
     @Override
     public void runOpMode() {
 
@@ -76,49 +95,41 @@ public class blueAutonomousFoundation extends LinearOpMode {
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");    //
-        telemetry.update();
-        try {
-            robot.myBigMotorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.myBigMotorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.myBigMotorRandP.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        } catch (Exception e){
-            telemetry.addData("Status", "Could not reset");    //
-            telemetry.addData("Error", e.getMessage());
-            telemetry.update();
-        }
 
-        try{
-            robot.myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        } catch (Exception e){
-            telemetry.addData("Status", "Could not run using encoder");    //
-            telemetry.addData("Error", e.getMessage());
-            telemetry.update();
-        }
+        robot.myBigMotorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.myBigMotorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.myBigMotorRandP.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        robot.myBigMotorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.myBigMotorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.myBigMotorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.myBigMotorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.myBigMotorRandP.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0",  "Starting at %7d :%7d :%7d :%7d",
-                                  robot.myBigMotorFrontRight.getCurrentPosition(),
-                                  robot.myBigMotorFrontLeft.getCurrentPosition(),
-                                  robot.myBigMotorBackLeft.getCurrentPosition(),
-                                  robot.myBigMotorBackRight.getCurrentPosition());
+        telemetry.addData("Initialized Positions",  "Running at %7d :%7d :%7d :%7d :%7d",
+                robot.myBigMotorFrontLeft.getCurrentPosition(),
+                robot.myBigMotorFrontRight.getCurrentPosition(),
+                robot.myBigMotorBackLeft.getCurrentPosition(),
+                robot.myBigMotorBackRight.getCurrentPosition(),
+                robot.myBigMotorRandP.getCurrentPosition());
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        robot.myBigServoFoundation.setPower(-1);
+        runtime.reset();
+
+        //While moving forward, continuously check the color sensor for red or blue.
+        //These values will have to be calibrated before each tournament since the values
+        //can fluctuate depending on lighting conditions. The STATIC variables for red and blue
+        //are defined above and should be changed based on calibrations
+
 
         driveToFoundation(1);
 
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
+        //telemetry.addData("Path", "Complete");
+        //telemetry.update();
     }
 
     /*
@@ -143,8 +154,8 @@ public class blueAutonomousFoundation extends LinearOpMode {
             // Determine new target position, and pass to motor controller
             newfLeftTarget = robot.myBigMotorFrontLeft.getCurrentPosition() + (int)(-fleftInches * COUNTS_PER_INCH);
             newfRightTarget = robot.myBigMotorFrontRight.getCurrentPosition() + (int)(-frightInches * COUNTS_PER_INCH);
-            newbLeftTarget = robot.myBigMotorFrontLeft.getCurrentPosition() + (int)(-bleftInches * COUNTS_PER_INCH);
-            newbRightTarget = robot.myBigMotorFrontRight.getCurrentPosition() + (int)(-brightInches * COUNTS_PER_INCH);
+            newbLeftTarget = robot.myBigMotorBackLeft.getCurrentPosition() + (int)(-bleftInches * COUNTS_PER_INCH);
+            newbRightTarget = robot.myBigMotorBackRight.getCurrentPosition() + (int)(-brightInches * COUNTS_PER_INCH);
             robot.myBigMotorFrontLeft.setTargetPosition(newfLeftTarget);
             robot.myBigMotorFrontRight.setTargetPosition(newfRightTarget);
             robot.myBigMotorBackLeft.setTargetPosition(newbLeftTarget);
@@ -157,7 +168,6 @@ public class blueAutonomousFoundation extends LinearOpMode {
             robot.myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
-            runtime.reset();
             robot.myBigMotorFrontLeft.setPower(Math.abs(speed));
             robot.myBigMotorFrontRight.setPower(Math.abs(speed));
             robot.myBigMotorBackLeft.setPower(Math.abs(speed));
@@ -171,18 +181,16 @@ public class blueAutonomousFoundation extends LinearOpMode {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
 
             while (opModeIsActive()
-                    //&&
-                   //(runtime.seconds() < timeoutS)
                     &&
-                    (robot.myBigMotorFrontLeft.isBusy() && robot.myBigMotorFrontRight.isBusy()
-                            && robot.myBigMotorBackLeft.isBusy() && robot.myBigMotorBackRight.isBusy())
+                    (robot.myBigMotorFrontLeft.isBusy() || robot.myBigMotorFrontRight.isBusy()
+                            || robot.myBigMotorBackLeft.isBusy() || robot.myBigMotorBackRight.isBusy())
             )
 
             {
 
                 // Display it for the driver.
                 //telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
-                telemetry.addData("Path2",  "Running at %7d :%7d :%7d :%7d",
+                telemetry.addData("Current Path",  "Running at %7d :%7d :%7d :%7d",
                                             robot.myBigMotorFrontLeft.getCurrentPosition(),
                                             robot.myBigMotorFrontRight.getCurrentPosition(),
                                             robot.myBigMotorBackLeft.getCurrentPosition(),
@@ -208,29 +216,83 @@ public class blueAutonomousFoundation extends LinearOpMode {
 
     public void driveToFoundation(double speed){
         //Raise RandP
-        robot.setRackAndPinionHeight(1440,1);
-        //Move off of wall
-        encoderDrive(.5,4,4,4,4);
-        //Strafing left to center to foundation
-        encoderDrive(.5,-6,6,6,-6);
+        //robot.setRackAndPinionHeight(1440,1);
+
         //Move to foundation
-        encoderDrive(.5,25,25,25,25);
-        //Drop RandP onto Foundation
-        robot.setRackAndPinionHeight(0,1);
-        //Wait for RandP to land on foundation
-        sleep(1000);
+        encoderDrive(speed,15,15,15,15);
+
+        robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        robot.myBigMotorFrontLeft.setPower(-.25);
+        robot.myBigMotorFrontRight.setPower(-.25);
+        robot.myBigMotorBackLeft.setPower(-.25);
+        robot.myBigMotorBackRight.setPower(-.25);
+
+        while(opModeIsActive()){
+
+
+            Color.RGBToHSV((int) (robot.myBigColorSensor.red() * SCALE_FACTOR),
+                    (int) (robot.myBigColorSensor.green() * SCALE_FACTOR),
+                    (int) (robot.myBigColorSensor.blue() * SCALE_FACTOR),
+                    hsvValues);
+
+            telemetry.addData("Hue", hsvValues[0]);
+            telemetry.update();
+
+            if(hsvValues[0] > RED_LOWER_BOUND && hsvValues[0] < RED_UPPER_BOUND){
+                myBigColor = "RED";
+                break;
+            }
+
+        }
+
+        robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.myBigMotorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.myBigMotorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //Strafing to center to foundation depending on color detected
+        if(myBigColor == "RED"){
+            encoderDrive(1,-3,3,3,-3);
+        }
+
+        else if(myBigColor == "BLUE"){
+            encoderDrive(speed,3,-3,-3,3);
+        }
+
+
+        sleep(150);
+        //Drop Foundation Mover
+        robot.myBigServoFoundation.setPower(0);
+
         //Pull foundation backwards to wall
-        encoderDrive(.5,-28,-28,-28,-28);
-        //Lift RandP off of foundation before strafing to park
-        robot.setRackAndPinionHeight(1440,1);
-        //Wait for RandP to clear foundation before strafing
-        sleep(1000);
-        //Start strafing toward parking zone
-        encoderDrive(1,20,-20,-20,20);
-        //Set RandP back down to start position
-        robot.setRackAndPinionHeight(0,1);
-        sleep(1000);
-        //Finish strafing to parking zone
-        encoderDrive(1,23,-23,-23,23);
+        encoderDrive(1,-13,-13,-13,-13);
+
+        //Rotate Foundation
+        if(myBigColor == "RED"){
+            encoderDrive(.5,-20,20,-20,20);
+        }
+
+        else if(myBigColor == "BLUE"){
+            encoderDrive(.5,13,-13,13,-13);
+        }
+
+        //Raise Foundation Mover
+        robot.myBigServoFoundation.setPower(-1);
+//
+//        //Wait for RandP to clear foundation before strafing
+//        //sleep(1000);
+//
+//        //Strafe toward parking zone
+//        //encoderDrive(1,43,-43,-43,43);
+//
+//        //Set RandP back down to start position
+//        //robot.setRackAndPinionHeight(0,1);
+//        //sleep(1000);
+//        //Finish strafing to parking zone
+//        //encoderDrive(1,23,-23,-23,23);
     }
 }

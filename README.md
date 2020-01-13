@@ -1,11 +1,14 @@
+##Fossum Robotics 12360
+
 ## NOTICE
 
-This repository contains the public FTC SDK for the SKYSTONE (2019-2020) competition season.  
+This repository contains the public Team Code for Fossum Middle School #12360 along with FTC SDK for the SKYSTONE (2019-2020) competition season.  
 
 Formerly this software project was hosted [here](https://github.com/ftctechnh/ftc_app).  Teams who are competing in the SKYSTONE Challenge should use this [new SKYSTONE repository](https://github.com/FIRST-Tech-Challenge/SKYSTONE) instead of the older (and no longer updated) ftc_app repository.
 
 ## Welcome!
 This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
+This repository also contains Fossum's teamcode for the 2019-2020 FTC Skystone competition season.
 
 ## Getting Started
 If you are new to robotics or new to the *FIRST* Tech Challenge, then you should consider reviewing the [FTC Blocks Tutorial](https://github.com/FIRST-Tech-Challenge/SKYSTONE/wiki/Blocks-Tutorial) to get familiar with how to use the control system:  
@@ -50,6 +53,16 @@ For technical questions regarding the Control System or the FTC SDK, please visi
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FTC Technology Forum](https://ftcforum.usfirst.org/forumdisplay.php?156-FTC-Technology)
 
+*************************************************************************************
+# Fossum #12360 Team Code Release Information
+*************************************************************************************
+
+Version 1.x (20200113-12360)
+
+*Fixes to autonomous mode
+*Added color sensor to detect color of foundation and set orientation
+*Improved TeleOp Controls, added D-Pad down to move Rack and Pinion half height and D-Pad up for full height
+*Enabled motor encoders to improve control sensitivity
 
 **************************************************************************************
 # Release Information

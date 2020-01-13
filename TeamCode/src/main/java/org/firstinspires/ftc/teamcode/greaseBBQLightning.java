@@ -52,12 +52,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 //import com.qualcomm.robotcore.hardware.DcMotorSimple; May be redundant with DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+//import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
+//import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 /**
@@ -125,14 +125,16 @@ public class greaseBBQLightning
     DcMotor myBigMotorBackLeft = null;
     DcMotor myBigMotorBackRight = null;
     DcMotor myBigMotorRandP = null;
-    DcMotor myBigMotorLeftLifter = null;
-    DcMotor myBigMotorRightLifter = null;
+    //DcMotor myBigMotorLeftLifter = null;
+    //DcMotor myBigMotorRightLifter = null;
 
     CRServo myBigServoClaw = null;
     CRServo myBigServoFoundation = null;
 
-    //ColorSensor myBigColorSensor = null;
-    //DistanceSensor myBigDistanceSensor = null;
+    ColorSensor myBigColorSensor = null;
+    DistanceSensor myBigDistanceSensor = null;
+
+    public boolean RNPMoving = false;
 
     /**
      * Here we can begin to declare our local or "private" object class members. These are the
@@ -164,6 +166,14 @@ public class greaseBBQLightning
         myBigMotorRandP.setTargetPosition(position);
         myBigMotorRandP.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         myBigMotorRandP.setPower(motorPower);
+
+        while(myBigMotorRandP.isBusy()){
+            RNPMoving = true;
+        }
+
+        RNPMoving = false;
+        //myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //myBigMotorRandP.setPower(0);
     }
 
     /* Initialize standard Hardware interfaces */
@@ -180,8 +190,8 @@ public class greaseBBQLightning
         myBigMotorBackLeft = hwMap.get(DcMotor.class, "myBigMotorBackLeft");
         myBigMotorBackRight = hwMap.get(DcMotor.class, "myBigMotorBackRight");
         myBigMotorRandP = hwMap.get(DcMotor.class, "myBigMotorRandP");
-        myBigMotorLeftLifter = hwMap.get(DcMotor.class, "myBigMotorLeftLifter");
-        myBigMotorRightLifter = hwMap.get(DcMotor.class, "myBigMotorRightLifter");
+        //myBigMotorLeftLifter = hwMap.get(DcMotor.class, "myBigMotorLeftLifter");
+        //myBigMotorRightLifter = hwMap.get(DcMotor.class, "myBigMotorRightLifter");
 
         // Set all motors to zero power
         myBigMotorBackLeft.setPower(0);
@@ -189,8 +199,8 @@ public class greaseBBQLightning
         myBigMotorFrontLeft.setPower(0);
         myBigMotorFrontRight.setPower(0);
         myBigMotorRandP.setPower(0);
-        myBigMotorLeftLifter.setPower(0);
-        myBigMotorRightLifter.setPower(0);
+        //myBigMotorLeftLifter.setPower(0);
+        //myBigMotorRightLifter.setPower(0);
 
         // Set Direction of motors
         myBigMotorBackLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -198,8 +208,8 @@ public class greaseBBQLightning
         myBigMotorBackRight.setDirection(DcMotor.Direction.REVERSE);
         myBigMotorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         myBigMotorRandP.setDirection(DcMotor.Direction.REVERSE);
-        myBigMotorLeftLifter.setDirection(DcMotor.Direction.FORWARD);
-        myBigMotorRightLifter.setDirection(DcMotor.Direction.REVERSE);
+        //myBigMotorLeftLifter.setDirection(DcMotor.Direction.FORWARD);
+        //myBigMotorRightLifter.setDirection(DcMotor.Direction.REVERSE);
 
         myBigMotorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         myBigMotorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -210,28 +220,29 @@ public class greaseBBQLightning
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
 
-        //myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //myBigMotorLeftLifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //myBigMotorRightLifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //Initialize at target position 0
+        myBigMotorRandP.setTargetPosition(0);
 
         // Define and initialize servos
         myBigServoClaw = hwMap.get(CRServo.class, "myBigServoClaw");
         myBigServoFoundation = hwMap.get(CRServo.class, "myBigServoFoundation");
 
         //Set all servos to power 0
-        myBigServoClaw.setPower(-.3);
+        myBigServoClaw.setPower(-.1);
         myBigServoFoundation.setPower(-1);
 
         //Define and initialize color/distance sensor
-        //myBigColorSensor = hwMap.get(ColorSensor.class, "myBigColorSensor");
-        //myBigDistanceSensor = hwMap.get(DistanceSensor.class, "myBigColorSensor");
+        myBigColorSensor = hwMap.get(ColorSensor.class, "myBigColorSensor");
+        myBigDistanceSensor = hwMap.get(DistanceSensor.class, "myBigColorSensor");
 
-        //Set Led to off
-        //myBigColorSensor.enableLed(false);
 
     }
 }
