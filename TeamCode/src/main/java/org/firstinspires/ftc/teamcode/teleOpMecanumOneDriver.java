@@ -8,30 +8,21 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import edu.spa.ftclib.internal.drivetrain.MecanumDrivetrain;
-import edu.spa.ftclib.internal.state.ToggleBoolean;
-import edu.spa.ftclib.internal.state.Button;
 
 //@Disabled
-@TeleOp(name="One Driver Mecanum", group="Mecanum Drivetrain")
+@TeleOp(name="TeleOp", group="Mecanum Drivetrain")
 
 public class teleOpMecanumOneDriver extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private greaseBBQLightning robot = new greaseBBQLightning();
-    //private Button RNPFixStart;
-    private ToggleBoolean RNPFix;
-    private ToggleBoolean oneStack;
-    private ToggleBoolean twoStack;
+
     public MecanumDrivetrain drivetrain;
     // declare motor speed variables
     double RF; double LF; double RR; double LR;
-    int pressCounter = 0;
 
     @Override
     public void runOpMode() {
-        RNPFix = new ToggleBoolean();
-        oneStack = new ToggleBoolean();
-        twoStack = new ToggleBoolean();
 
         robot.init(hardwareMap);
         drivetrain = new MecanumDrivetrain(new DcMotor[]{robot.myBigMotorFrontLeft, robot.myBigMotorFrontRight, robot.myBigMotorBackLeft, robot.myBigMotorBackRight});
@@ -39,21 +30,13 @@ public class teleOpMecanumOneDriver extends LinearOpMode {
         robot.myBigMotorRandP.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //robot.myBigMotorRandP.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        /**robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.myBigMotorLeftLifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.myBigMotorRightLifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);*/
-
-
-
-
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+        robot.myBigServoFoundation.setPower(-1);
+        robot.myBigServoClaw.setPower(-.1);
 
-        while (opModeIsActive()) {
+        while (opModeIsActive() && runtime.seconds() <= 120) {
             //Run the holonomic formulas for each wheel
             //This is the easiest implementation for mecanum wheels
             LF = gamepad1.left_stick_y - gamepad1.left_stick_x - (gamepad1.right_stick_x);
@@ -74,7 +57,9 @@ public class teleOpMecanumOneDriver extends LinearOpMode {
             //Fix R and P when stuck in up position
             ///////////////////////////////////////
 
-
+            if(this.gamepad1.right_stick_button){
+                robot.fixRackAndPinionHeight(robot.myBigMotorRandP.getCurrentPosition());
+            }
 //
 //            while(RNPFix.output()){
 //                ToggleBoolean RNPFixStop = new ToggleBoolean();
@@ -126,11 +111,6 @@ public class teleOpMecanumOneDriver extends LinearOpMode {
                 robot.setRackAndPinionHeight(3500,1);
             }
 
-            //Set RandP motor power to zero just as a safe guard when nothing is being pressed
-            //if(!RNPFixStart.Press())
-            //oneStack.input(this.gamepad1.dpad_down);
-            //twoStack.input(this.gamepad1.dpad_up);
-
             if(!robot.RNPMoving) {
                 robot.myBigMotorRandP.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.myBigMotorRandP.setPower(0);
@@ -162,13 +142,21 @@ public class teleOpMecanumOneDriver extends LinearOpMode {
             /////////////////////////////
             //Foundation Control
             ////////////////////////////
+
+            /////////////////////////////
+            //Foundation Up
+            ////////////////////////////
             if (this.gamepad1.y) {
                 robot.myBigServoFoundation.setPower(-1);
             }
 
+            /////////////////////////////
+            //Foundation Down
+            ////////////////////////////
             if (this.gamepad1.x) {
                 robot.myBigServoFoundation.setPower(0);
             }
+
             ///////////////////////////
             //End Foundation Control
             //////////////////////////

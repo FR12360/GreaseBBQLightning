@@ -65,13 +65,11 @@ public class blueAutonomousFoundation extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 4 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                       (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = .5;
-    static final double     TURN_SPEED              = 0.5;
 
-    static final double     RED_LOWER_BOUND         = 6;
-    static final double     RED_UPPER_BOUND         = 30;
-    static final double     BLUE_LOWER_BOUND        = 0;
-    static final double     BLUE_UPPER_BOUND        = 0;
+    static final double     RED_LOWER_BOUND         = 9;
+    static final double     RED_UPPER_BOUND         = 16;
+    static final double     BLUE_LOWER_BOUND        = 209;
+    static final double     BLUE_UPPER_BOUND        = 240;
 
     String myBigColor = null;
 
@@ -79,7 +77,7 @@ public class blueAutonomousFoundation extends LinearOpMode {
     float hsvValues[] = {0F, 0F, 0F};
 
     // values is a reference to the hsvValues array.
-    final float values[] = hsvValues;
+    //final float values[] = hsvValues;
 
     // sometimes it helps to multiply the raw RGB values with a scale factor
     // to amplify/attentuate the measured values.
@@ -94,19 +92,18 @@ public class blueAutonomousFoundation extends LinearOpMode {
          */
         robot.init(hardwareMap);
 
-        // Send telemetry message to signify robot waiting;
 
-        robot.myBigMotorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.myBigMotorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.myBigMotorRandP.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        robot.myBigMotorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        robot.myBigMotorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        robot.myBigMotorRandP.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        robot.myBigMotorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.myBigMotorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.myBigMotorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.myBigMotorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.myBigMotorRandP.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        robot.myBigMotorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        robot.myBigMotorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        robot.myBigMotorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        robot.myBigMotorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        robot.myBigMotorRandP.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         telemetry.addData("Initialized Positions",  "Running at %7d :%7d :%7d :%7d :%7d",
                 robot.myBigMotorFrontLeft.getCurrentPosition(),
@@ -116,33 +113,22 @@ public class blueAutonomousFoundation extends LinearOpMode {
                 robot.myBigMotorRandP.getCurrentPosition());
         telemetry.update();
 
+
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
-        //While moving forward, continuously check the color sensor for red or blue.
-        //These values will have to be calibrated before each tournament since the values
-        //can fluctuate depending on lighting conditions. The STATIC variables for red and blue
-        //are defined above and should be changed based on calibrations
+        while(opModeIsActive() && runtime.seconds() < 30) {
 
-
-        driveToFoundation(1);
-
-        //telemetry.addData("Path", "Complete");
-        //telemetry.update();
+            driveToFoundation(1);
+            break;
+        }
     }
 
-    /*
-     *  Method to perfmorm a relative move, based on encoder counts.
-     *  Encoders are not reset as the move is based on the current position.
-     *  Move will stop if any of three conditions occur:
-     *  1) Move gets to the desired position
-     *  2) Move runs out of time
-     *  3) Driver stops the opmode running.
-     */
-    public void encoderDrive(double speed,
-                             double fleftInches, double frightInches,
-                             double bleftInches, double brightInches) {
+
+    public void encoderDrive(double speed, double fleftInches, double frightInches, double bleftInches, double brightInches)
+    {
         int newfLeftTarget;
         int newfRightTarget;
         int newbLeftTarget;
@@ -167,35 +153,35 @@ public class blueAutonomousFoundation extends LinearOpMode {
             robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            // reset the timeout time and start motion.
+            // start motion.
             robot.myBigMotorFrontLeft.setPower(Math.abs(speed));
             robot.myBigMotorFrontRight.setPower(Math.abs(speed));
             robot.myBigMotorBackLeft.setPower(Math.abs(speed));
             robot.myBigMotorBackRight.setPower(Math.abs(speed));
 
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // keep looping while we are still active, and there is time left, and all motors running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means if all motors are not
+            // running to position, the motion will stop.  This is "safer" in the event that the robot will
             // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // However, if you require that ANY motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
 
             while (opModeIsActive()
                     &&
-                    (robot.myBigMotorFrontLeft.isBusy() || robot.myBigMotorFrontRight.isBusy()
-                            || robot.myBigMotorBackLeft.isBusy() || robot.myBigMotorBackRight.isBusy())
+                    (robot.myBigMotorFrontLeft.isBusy() && robot.myBigMotorFrontRight.isBusy()
+                            && robot.myBigMotorBackLeft.isBusy() && robot.myBigMotorBackRight.isBusy())
             )
 
             {
 
                 // Display it for the driver.
                 //telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
-                telemetry.addData("Current Path",  "Running at %7d :%7d :%7d :%7d",
-                                            robot.myBigMotorFrontLeft.getCurrentPosition(),
-                                            robot.myBigMotorFrontRight.getCurrentPosition(),
-                                            robot.myBigMotorBackLeft.getCurrentPosition(),
-                                            robot.myBigMotorBackRight.getCurrentPosition());
-                telemetry.update();
+//                telemetry.addData("Current Path",  "Running at %7d :%7d :%7d :%7d",
+//                                            robot.myBigMotorFrontLeft.getCurrentPosition(),
+//                                            robot.myBigMotorFrontRight.getCurrentPosition(),
+//                                            robot.myBigMotorBackLeft.getCurrentPosition(),
+//                                            robot.myBigMotorBackRight.getCurrentPosition());
+//                telemetry.update();
             }
 
             // Stop all motion;
@@ -210,29 +196,27 @@ public class blueAutonomousFoundation extends LinearOpMode {
             robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            //  sleep(250);   // optional pause after each move
         }
     }
 
     public void driveToFoundation(double speed){
-        //Raise RandP
-        //robot.setRackAndPinionHeight(1440,1);
-
+        robot.myBigServoFoundation.setPower(-1);
+        robot.myBigServoClaw.setPower(-.1);
+        robot.setRackAndPinionHeight(500,1);
         //Move to foundation
         encoderDrive(speed,15,15,15,15);
 
-        robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.myBigMotorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.myBigMotorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        //Slow down to detect color of foundation
         robot.myBigMotorFrontLeft.setPower(-.25);
         robot.myBigMotorFrontRight.setPower(-.25);
         robot.myBigMotorBackLeft.setPower(-.25);
         robot.myBigMotorBackRight.setPower(-.25);
 
+        //While moving forward, continuously check the color sensor for red or blue.
+        //These values will have to be calibrated before each tournament since the values
+        //can fluctuate depending on lighting conditions. The STATIC variables for red and blue
+        //are defined above and should be changed based on calibrations
         while(opModeIsActive()){
-
 
             Color.RGBToHSV((int) (robot.myBigColorSensor.red() * SCALE_FACTOR),
                     (int) (robot.myBigColorSensor.green() * SCALE_FACTOR),
@@ -245,54 +229,78 @@ public class blueAutonomousFoundation extends LinearOpMode {
             if(hsvValues[0] > RED_LOWER_BOUND && hsvValues[0] < RED_UPPER_BOUND){
                 myBigColor = "RED";
                 break;
+            } else if (hsvValues[0] > BLUE_LOWER_BOUND && hsvValues[0] < BLUE_UPPER_BOUND){
+                myBigColor = "BLUE";
+                break;
             }
-
         }
 
-        robot.myBigMotorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.myBigMotorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.myBigMotorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.myBigMotorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        telemetry.addData("Color", myBigColor);
+        telemetry.update();
 
         //Strafing to center to foundation depending on color detected
-        if(myBigColor == "RED"){
-            encoderDrive(1,-3,3,3,-3);
+        if(myBigColor == "BLUE"){
+            encoderDrive(.25,3,3,3,3);
+            encoderDrive(1,-6,6,6,-6);
         }
 
-        else if(myBigColor == "BLUE"){
-            encoderDrive(speed,3,-3,-3,3);
+        else if(myBigColor == "RED"){
+            encoderDrive(.25,3,3,3,3);
+            encoderDrive(speed,6,-6,-6,6);
         }
 
-
-        sleep(150);
+        sleep(200);
         //Drop Foundation Mover
         robot.myBigServoFoundation.setPower(0);
+        robot.setRackAndPinionHeight(0,1);
 
-        //Pull foundation backwards to wall
-        encoderDrive(1,-13,-13,-13,-13);
+        //Pull foundation backwards to wall slow then fast to allow claw grasp
+        encoderDrive(.25,-20,-20,-20,-20);
+        //encoderDrive(1,-10,-10,-10,-10);
 
         //Rotate Foundation
-        if(myBigColor == "RED"){
-            encoderDrive(.5,-20,20,-20,20);
-        }
+//        if(myBigColor == "BLUE"){
+//            encoderDrive(1,4,-4,-4,4);
+//            encoderDrive(.25,-10,10,-10,10);
+//            encoderDrive(1,4,-4,-4,4);
+//            encoderDrive(.25,-10,10,-10,10);
+//        }
 
-        else if(myBigColor == "BLUE"){
-            encoderDrive(.5,13,-13,13,-13);
-        }
+//        else if(myBigColor == "RED"){
+//            encoderDrive(1,-4,4,4,-4);
+//            encoderDrive(.25,10,-10,10,-10);
+//            encoderDrive(1,-4,4,4,-4);
+//            encoderDrive(.25,10,-10,10,-10);
+//        }
 
         //Raise Foundation Mover
         robot.myBigServoFoundation.setPower(-1);
+        
+        //Raise and lower RnP to free up claw
+        robot.setRackAndPinionHeight(150,1);
+
+        //Rotate towards bridge (color dependent)
+//        if(myBigColor == "BLUE"){
+//            encoderDrive(speed,10,-10,10,-10);
+//        }
 //
-//        //Wait for RandP to clear foundation before strafing
-//        //sleep(1000);
-//
-//        //Strafe toward parking zone
-//        //encoderDrive(1,43,-43,-43,43);
-//
-//        //Set RandP back down to start position
-//        //robot.setRackAndPinionHeight(0,1);
-//        //sleep(1000);
-//        //Finish strafing to parking zone
-//        //encoderDrive(1,23,-23,-23,23);
+//        else if(myBigColor == "RED"){
+//            encoderDrive(speed,-10,10,-10,10);
+//        }
+        
+        //Strafe towards bridge to park or continue and lower RnP
+        robot.setRackAndPinionHeight(0,1);
+
+        if(myBigColor == "BLUE"){
+            encoderDrive(speed,29,-29,-29,29);
+        }
+
+        else if(myBigColor == "RED"){
+            encoderDrive(speed,-29,29,29,-29);
+        }
+
+
+
+
     }
 }

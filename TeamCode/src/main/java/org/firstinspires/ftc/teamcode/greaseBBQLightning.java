@@ -51,13 +51,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-//import com.qualcomm.robotcore.hardware.DcMotorSimple; May be redundant with DcMotor
-//import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-//import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 /**
@@ -176,6 +173,22 @@ public class greaseBBQLightning
         //myBigMotorRandP.setPower(0);
     }
 
+    public void fixRackAndPinionHeight(int position){
+        if(position <= 0){
+            myBigMotorRandP.setTargetPosition(position-100);
+            myBigMotorRandP.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            myBigMotorRandP.setPower(.3);
+        }
+
+        while(myBigMotorRandP.isBusy()){
+            RNPMoving = true;
+        }
+
+        RNPMoving = false;
+        myBigMotorRandP.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //myBigMotorRandP.setPower(0);
+    }
+
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
@@ -211,6 +224,12 @@ public class greaseBBQLightning
         //myBigMotorLeftLifter.setDirection(DcMotor.Direction.FORWARD);
         //myBigMotorRightLifter.setDirection(DcMotor.Direction.REVERSE);
 
+        myBigMotorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        myBigMotorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        myBigMotorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        myBigMotorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        myBigMotorRandP.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         myBigMotorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         myBigMotorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         myBigMotorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -236,8 +255,8 @@ public class greaseBBQLightning
         myBigServoFoundation = hwMap.get(CRServo.class, "myBigServoFoundation");
 
         //Set all servos to power 0
-        myBigServoClaw.setPower(-.1);
-        myBigServoFoundation.setPower(-1);
+        myBigServoClaw.setPower(-.4);
+        myBigServoFoundation.setPower(0);
 
         //Define and initialize color/distance sensor
         myBigColorSensor = hwMap.get(ColorSensor.class, "myBigColorSensor");
